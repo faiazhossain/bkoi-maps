@@ -1,0 +1,450 @@
+* {
+  margin: 0px;
+}
+.ant-carousel .slick-dots li{
+  background-color: #606c5d;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.ant-carousel .slick-dots li button{
+  background-color: #ffffff;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.ant-carousel .slick-dots li.slick-active{
+  width: 10px;
+  border: 2px solid #040D12;
+}
+
+.ant-image-mask{
+  border-radius: 20px;
+}
+.ant-image-mask:hover{
+  border-radius: 20px;
+}
+._color_light {
+  color: #8c968a;
+}
+/* WIDTH */
+._width {
+  width: 320px;
+}
+._width_lg {
+  width: 400px;
+}
+/* MARGIN */
+._margin_top_sm {
+  margin-top: 10px;
+}
+
+._margin_top_md {
+  margin-top: 20px;
+}
+/* BORDER */
+._border_radius_20 {
+  border-radius: 20px;
+}
+._border_radius_5 {
+  border-radius: 5px;
+}
+.border_white {
+  border: 2px solid white;
+}
+/* FLEX */
+._flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+._flex_col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+._flex_col_around {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.distanceSearchBar {
+  z-index: 111;
+  min-width: 400px;
+}
+
+.autocompleteSearchbar {
+  min-width: 400px;
+}
+
+/* profile button style */
+.active {
+  color: #32a66b;
+  border-color: #32a66b;
+}
+.defaultActive {
+  color: #32a66b;
+  border-color: #32a66b;
+}
+
+.text_lg {
+  font-size: 24px;
+}
+
+/* antd float button style start*/
+.ant-float-btn {
+  width: 70px !important;
+}
+
+.ant-float-btn-body {
+  padding: 10px 0px !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.ant-float-btn-default .ant-float-btn-body {
+  background-color: #32a66b;
+}
+
+.ant-float-btn-default .ant-float-btn-body:hover {
+  background-color: #32a66b;
+}
+
+.ant-float-btn-group-square
+  .ant-float-btn-group-wrap
+  .ant-float-btn-square
+  .ant-float-btn-body {
+  background-color: transparent;
+}
+
+.ant-float-btn .ant-float-btn-body .ant-float-btn-content {
+  padding: 0px !important;
+}
+
+.ant-float-btn .ant-float-btn-body .ant-float-btn-content .ant-float-btn-icon {
+  width: 100%;
+}
+
+.ant-float-btn-group-square .ant-float-btn-square {
+  border-start-end-radius: 8px;
+  border-start-start-radius: 8px;
+}
+
+.ant-float-btn-square {
+  height: 60px !important;
+}
+
+.ant-float-btn-group-square
+  .ant-float-btn-group-wrap
+  .ant-float-btn-square
+  .ant-float-btn-body {
+  width: 100%;
+  height: 100%;
+}
+
+.activeButton
+  .ant-badge
+  .ant-float-btn-body
+  .ant-float-btn-content
+  .ant-float-btn-icon {
+  border: 3px solid #32a66b;
+  border-radius: 8px;
+  padding: 2px;
+}
+
+/* antd float button style end, ,electric shop */
+
+/* global button border */
+.blueBorder {
+  border: 1px solid #1a8edb;
+  border-radius: 5px;
+  padding: 5px 5px;
+  color: #1a8edb;
+}
+
+.greenBorder {
+  border: 1px solid #32a66b;
+  border-radius: 5px;
+  padding: 5px 5px;
+  color: #32a66b;
+}
+
+.redBorder {
+  border: 1px solid #ff0000;
+  border-radius: 5px;
+  padding: 5px 5px;
+  color: #ff0000;
+}
+
+.card_hover:hover {
+  background-color: #32a66b;
+  color: white;
+}
+.switchButtonStyle {
+  padding: 2px;
+}
+.switchButtonStyle:hover {
+  padding: 2px;
+  cursor: pointer;
+  border-radius: 30%;
+  background-color: #606c5d;
+  color: white;
+}
+
+/* AutoComplete Searchbar */
+.autoCompleteSearchbar > .ant-select-selector {
+  border: none !important;
+  box-shadow: none !important;
+}
+:where(.css-dev-only-do-not-override-12jzuas).ant-select-dropdown .ant-select-item-option-content >*{
+  white-space: break-spaces;
+  word-break: break-word;
+}
+
+
+.ant-select-dropdown{
+  min-width: 400px !important;
+  width: 400px !important;
+}
+
+.autoCompleteSearchbarButton {
+  border: none !important;
+}
+
+.paddingBtn {
+  padding-left: 0px !important;
+}
+
+/* scroll style */
+.searchbarDetails::-webkit-scrollbar,
+.distanceSearchBar::-webkit-scrollbar {
+  width: 7px;
+}
+
+.searchbarDetails::-webkit-scrollbar-track,
+.distanceSearchBar::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.searchbarDetails::-webkit-scrollbar-thumb,
+.distanceSearchBar::-webkit-scrollbar-thumb {
+  background: #93ecd0;
+  border-radius: 8px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  min-height: 40px;
+}
+
+.highlighted-option {
+  font-weight: bold !important;
+  background-color: #ffffcc !important; 
+}
+
+
+/* media query start */
+
+@media screen and (max-width: 576px) {
+  .autocompleteSearchbar {
+    min-width: 400px;
+  }
+  .distanceSearchBar,
+  .searchDetails {
+    min-width: 400px;
+  }
+  .ant-select-dropdown{
+    min-width: 380px !important;
+    width: 380px !important;
+  }
+  .maplibregl-ctrl-top-right {
+    top: 50px !important;
+    right: 5px;
+  }
+  ._width {
+    width: 100%;
+  }
+  ._width_lg {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .searchBars {
+    display: inline;
+  }
+  .autocompleteSearchbarContainer {
+    padding: 0px 10px;
+  }
+  .autocompleteSearchbar {
+    min-width: 360px;
+  }
+  .ant-select-dropdown{
+    min-width: 320px !important;
+    width: 320px !important;
+  }
+  .maplibregl-ctrl-top-right {
+    top: 60px !important;
+    right: 5px;
+  }
+  .imageFit {
+    width: 300px !important;
+  }
+  .searchbarDetails {
+    height: 250px !important;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: 8px;
+  }
+  .searchDetailsDiv {
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .autocompleteSearchbar {
+    min-width: 300px;
+  }
+  .ant-select-dropdown{
+    min-width: 260px !important;
+    width: 260px !important;
+  }
+  .imageFit {
+    width: 250px !important;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  .autocompleteSearchbar {
+    min-width: 280px;
+  }
+  .ant-select-dropdown{
+    min-width: 280px !important;
+    width: 280px !important;
+  }
+  .distanceSearchBar,
+  .searchDetails {
+    min-width: 280px;
+  }
+  ._width_lg {
+    width: 280px;
+  }
+}
+
+/* Animation */
+
+.marker-animation {
+  animation: myAnim 2s ease 0s 1 normal forwards;
+}
+
+@keyframes myAnim {
+  0% {
+    animation-timing-function: ease-in;
+    opacity: 1;
+    transform: translateY(-45px);
+  }
+
+  24% {
+    opacity: 1;
+  }
+
+  40% {
+    animation-timing-function: ease-in;
+    transform: translateY(-24px);
+  }
+
+  65% {
+    animation-timing-function: ease-in;
+    transform: translateY(-12px);
+  }
+
+  82% {
+    animation-timing-function: ease-in;
+    transform: translateY(-6px);
+  }
+
+  93% {
+    animation-timing-function: ease-in;
+    transform: translateY(-4px);
+  }
+
+  25%,
+  55%,
+  75%,
+  87% {
+    animation-timing-function: ease-out;
+    transform: translateY(0px);
+  }
+
+  100% {
+    animation-timing-function: ease-out;
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
+.wobble-hor-bottom {
+  -webkit-animation: wobble-hor-bottom 1s both;
+  animation: wobble-hor-bottom 1s both;
+}
+@-webkit-keyframes wobble-hor-bottom {
+  0%,
+  100% {
+    -webkit-transform: translateX(0%);
+    transform: translateX(0%);
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+  }
+  15% {
+    -webkit-transform: translateX(-30px) rotate(-6deg);
+    transform: translateX(-30px) rotate(-6deg);
+  }
+  30% {
+    -webkit-transform: translateX(15px) rotate(6deg);
+    transform: translateX(15px) rotate(6deg);
+  }
+  45% {
+    -webkit-transform: translateX(-15px) rotate(-3.6deg);
+    transform: translateX(-15px) rotate(-3.6deg);
+  }
+  60% {
+    -webkit-transform: translateX(9px) rotate(2.4deg);
+    transform: translateX(9px) rotate(2.4deg);
+  }
+  75% {
+    -webkit-transform: translateX(-6px) rotate(-1.2deg);
+    transform: translateX(-6px) rotate(-1.2deg);
+  }
+}
+
+@keyframes wobble-hor-bottom {
+  0%,
+  100% {
+    -webkit-transform: translateX(0%);
+    transform: translateX(0%);
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+  }
+  15% {
+    -webkit-transform: translateX(-30px) rotate(-6deg);
+    transform: translateX(-30px) rotate(-6deg);
+  }
+  30% {
+    -webkit-transform: translateX(15px) rotate(6deg);
+    transform: translateX(15px) rotate(6deg);
+  }
+  45% {
+    -webkit-transform: translateX(-15px) rotate(-3.6deg);
+    transform: translateX(-15px) rotate(-3.6deg);
+  }
+  60% {
+    -webkit-transform: translateX(9px) rotate(2.4deg);
+    transform: translateX(9px) rotate(2.4deg);
+  }
+  75% {
+    -webkit-transform: translateX(-6px) rotate(-1.2deg);
+    transform: translateX(-6px) rotate(-1.2deg);
+  }
+}
