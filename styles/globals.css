@@ -146,6 +146,10 @@
   height: 100%;
 }
 
+.ant-popover .ant-popover-title{
+  min-width: 80px;
+}
+
 .activeButton
   .ant-badge
   .ant-float-btn-body

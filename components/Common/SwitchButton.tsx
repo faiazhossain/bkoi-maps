@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Popover, Switch } from 'antd';
+import { Popover, Switch, Tooltip } from 'antd';
 import { useAppDispatch } from '@/redux/store';
-import { setMapillaryData } from '@/redux/reducers/mapReducer';
+import { setImgId, setMapillaryData, setSingleMapillaryData } from '@/redux/reducers/mapReducer';
 import { FaStreetView } from 'react-icons/fa';
 
 const SwitchButton: React.FC<{ id: (value: null) => void }> = ({ id }) => {
@@ -13,23 +13,24 @@ const SwitchButton: React.FC<{ id: (value: null) => void }> = ({ id }) => {
       setChecked(false);
     } else {
       dispatch(setMapillaryData(false));
+      dispatch(setImgId(null));
+      dispatch(setSingleMapillaryData(null))
       id(null);
       setChecked(true);
     }
   };
 
   // The rest of your component code
-
-
   return(
     <div onClick={onChange} style={{...Style, cursor:'pointer',color:checked?'black':'#82CD47', fontSize:checked?32:34}}>
-    <Popover title="StreetView">
+    {/* <Popover title="Street View"> */}
+    <Tooltip placement='left' title="Street View"  color='rgba(0, 0, 0, .8)'>
       <FaStreetView style={{ stroke: checked?'none': "#445069", strokeWidth: "18"}}/>
-    </Popover>
+    </Tooltip>
+    {/* </Popover> */}
   </div>
   )
 }
-
 
 export default SwitchButton;
 

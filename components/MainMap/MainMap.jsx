@@ -20,12 +20,15 @@ import {
   setToggleDistanceButton,
   setUCode,
   setUCodeMarker,
+  setSingleMapillaryData,
+  setImgId,
+  setScatterData
 } from "@/redux/reducers/mapReducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import "maplibre-gl/dist/maplibre-gl.css";
 import SearchComponent from "../SearchField/SearchComponent";
 
-import { GeoJsonLayer, IconLayer, TextLayer, PolygonLayer } from "@deck.gl/layers/typed";
+import { GeoJsonLayer, IconLayer, TextLayer, PolygonLayer, ScatterplotLayer } from "@deck.gl/layers/typed";
 
 import { Col, Image, Row } from "antd";
 
@@ -100,6 +103,10 @@ const MainMap = () => {
   const mapData = useAppSelector((state) => state?.map?.mapData ?? null);
   const polygonData = useAppSelector((state) => state?.map?.polyGonData ?? null);
   const mapillaryData = useAppSelector((state) => state?.map?.mapillaryData ?? null);
+  const singleMapillaryData = useAppSelector((state) => state?.map?.singleMapillaryData ?? null);
+  const scatterData = useAppSelector((state) => state?.map?.scatterData ?? null);
+  const imgId = useAppSelector((state) => state?.map?.imgId ?? null);
+
   // on select getting location latitude and longitude
   const handleLocationSelect = (latitude, longitude) => {
     const lngLat = { latitude, longitude };
@@ -204,6 +211,24 @@ const transformedDataPolygon = !mapData && revGeoData
 : revGeoData;
 
 
+// const [scatterData,setScatterData]=useState(null);
+
+useEffect(() => {
+  fetch(
+    `https://graph.mapillary.com/${imgId}?access_token=MLY|9965372463534997|6cee240fad8e5571016e52cd3f24d7f8&fields=computed_geometry`
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data,'One')
+    // dispatch(setScatterData(data.computed_geometry.coordinates));
+    dispatch(setScatterData(data.computed_geometry.coordinates))
+    })
+    .catch((error) => console.error(error));
+}, [imgId]);
+
+  const modifiedScatterData = [{coordinates:scatterData}];
+  console.log(imgId,'Faiaz')
+
  
   // distance matrix layers
   const layers = [
@@ -282,48 +307,72 @@ const transformedDataPolygon = !mapData && revGeoData
       getPixelOffset: [14, 0],
     }),
 
-    new PolygonLayer({
-      id: 'polygon-layer',
-      data: transformedData,
+    new ScatterplotLayer({
+      id: 'scatterplot-layer',
+      data:modifiedScatterData,
       pickable: true,
+      opacity: 0.8,
       stroked: true,
       filled: true,
-      wireframe: true,
+      radiusScale: 6,
+      radiusMinPixels: 1,
+      radiusMaxPixels: 100,
       lineWidthMinPixels: 1,
-      getPolygon: d => d.contour,
-      getElevation: d => d.population / d.area / 10,
-      getFillColor: [254, 179, 145, 120],
-      getLineColor: [80, 80, 80], 
-      getLineWidth: 1
-    }),
-    new PolygonLayer({
-      id: 'polygon-layer',
-      data: transformedDataPolygon,
-      pickable: true,
-      stroked: true,
-      filled: true,
-      wireframe: true,
-      lineWidthMinPixels: 1,
-      getPolygon: d => d.contour,
-      getElevation: d => d.population / d.area / 10,
-      getFillColor: [254, 179, 145, 120],
-      getLineColor: [80, 80, 80], 
-      getLineWidth: 1
-    }),
+      getPosition: d => d.coordinates,
+      getRadius: d => Math.sqrt(d.exits),
+      getFillColor: d => [255, 140, 0],
+      getLineColor: d => [0, 0, 0]
+    })
+
+    // new PolygonLayer({
+    //   id: 'polygon-layer',
+    //   data: transformedData,
+    //   pickable: true,
+    //   stroked: true,
+    //   filled: true,
+    //   wireframe: true,
+    //   lineWidthMinPixels: 1,
+    //   getPolygon: d => d.contour,
+    //   getElevation: d => d.population / d.area / 10,
+    //   getFillColor: [254, 179, 145, 120],
+    //   getLineColor: [80, 80, 80], 
+    //   getLineWidth: 1
+    // }),
+    // new PolygonLayer({
+    //   id: 'polygon-layer',
+    //   data: transformedDataPolygon,
+    //   pickable: true,
+    //   stroked: true,
+    //   filled: true,
+    //   wireframe: true,
+    //   lineWidthMinPixels: 1,
+    //   getPolygon: d => d.contour,
+    //   getElevation: d => d.population / d.area / 10,
+    //   getFillColor: [254, 179, 145, 120],
+    //   getLineColor: [80, 80, 80], 
+    //   getLineWidth: 1
+    // }),
   ];
 
   // For setting mappillary ID on click
 
-  const [singleMapillaryData, setSingleMapillaryData]= useState(null);
+  // const [singleMapillaryData, setSingleMapillaryData]= useState(null);
 
   const handleClick = (e) => {
-    
     const mapillaryFeatures = e.target.queryRenderedFeatures(e.point, {
       layers: [ 'mapillary-images'], // Specify the layers you want to query
+    });   
+  
+
+    const bkoi_features = e.target.queryRenderedFeatures(e.point, {
+      layers: [ 'mapillary-images'], // Specify the layers you want to query
     });
+    
+   
 
     if(mapillaryFeatures[0]?.properties.id){
-      setSingleMapillaryData(mapillaryFeatures[0]?.properties.id);
+      dispatch(setSingleMapillaryData(mapillaryFeatures[0]?.properties.id));
+      dispatch(setImgId(null));
     }
     else {
     const features = mapRef?.current?.queryRenderedFeatures(e.point);
@@ -371,7 +420,6 @@ const transformedDataPolygon = !mapData && revGeoData
     const lat = e?.lngLat?.lat;
     const lng = e?.lngLat?.lng;
     const data = { lat, lng };
-    console.log(data,'ki data')
     // dispatch(setUCode(properties.ucode))
     dispatch(setReverseGeoLngLat(data));
     dispatch(setUCodeMarker(null));
@@ -534,7 +582,7 @@ const transformedDataPolygon = !mapData && revGeoData
 
 
   const handleMapillaryData = () => {
-    setSingleMapillaryData(null);
+    dispatch(setSingleMapillaryData(null));
   };
 
   
@@ -581,7 +629,7 @@ const transformedDataPolygon = !mapData && revGeoData
             <Marker
               longitude={uCodeData?.longitude || 90.378392}
               latitude={uCodeData?.latitude || 23.766631}
-              style={{zIndex:99999}}
+              style={{zIndex:99}}
             >      
                 <Image
                   src="/images/icon.png"
@@ -601,7 +649,7 @@ const transformedDataPolygon = !mapData && revGeoData
                 longitude={reverseGeoLngLat?.lng || 90.378392}
                 latitude={reverseGeoLngLat?.lat || 23.766631}
                 anchor="bottom"
-                style={{zIndex:99999}}
+                style={{zIndex:99}}
               >
                 {selectLocationTo === null && (
                   <Image
@@ -630,7 +678,7 @@ const transformedDataPolygon = !mapData && revGeoData
                   key={index}
                   longitude={data.longitude || 90.378392}
                   latitude={data.latitude || 23.766631}
-                  style={{zIndex:99999}}
+                  style={{zIndex:99}}
                 >
                   {!isClickedLocation && ( // Exclude the marker if it matches the clicked location
                     <Image
@@ -735,12 +783,12 @@ const transformedDataPolygon = !mapData && revGeoData
               paint={{
                 // 'circle-color': '#05CB63',
                 'circle-color': '#05CB63',
-                      'circle-radius': 5,
+                'circle-radius': 5,
               }} 
                
           />   
           </Source>}
-          {/* {singleMapillaryData && <MapillaryViewer onMapillaryData={handleMapillaryData} id={singleMapillaryData} />} */}
+          {singleMapillaryData && <MapillaryViewer onMapillaryData={handleMapillaryData} id={singleMapillaryData} />}
         </Map>
       </Col>
     </Row>

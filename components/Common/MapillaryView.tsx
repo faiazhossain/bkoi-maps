@@ -1,24 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { SequenceComponent, Viewer } from 'mapillary-js';
+import { Viewer } from 'mapillary-js';
 import { AiOutlineCloseCircle, AiOutlineFullscreen, AiOutlineFullscreenExit } from 'react-icons/ai';
-
-interface MapillaryViewerProps {
-  id: string;
-  // width: string;
+import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { setImgId, setSingleMapillaryData } from '@/redux/reducers/mapReducer';
+  // const dispatch = useAppDispatch();
+  interface MapillaryViewerProps {
+    id: string;
+    // width: string;
   // height: string; 
   onMapillaryData: any;
 }
 const MapillaryViewer: React.FC<MapillaryViewerProps> = ({ onMapillaryData, id}) => {
+  
+  const singleMapillaryData = useAppSelector((state) => state?.map?.singleMapillaryData ?? null);
+  const imgId = useAppSelector((state) => state?.map?.imgId ?? null);
+  const dispatch = useAppDispatch();
   const [fullScreen, setFullScreen]=useState(false);
   useEffect(() => {
     const viewer = new Viewer({
       accessToken: "MLY|9965372463534997|6cee240fad8e5571016e52cd3f24d7f8",
       container: "mapillary-container", // Use the ID of your container element
-      imageId: id,     // Specify the image ID you want to display
+      imageId: imgId ? imgId : id, // Specify the image ID you want to display
       component:{cover:false},
-      
     });
-    
+
+    const onImage = (event: { image: { id: any; }; })=>{
+      const imageId = event.image.id;
+      dispatch(setImgId(imageId))
+    };
+      viewer.on('image', onImage);
+
     return () => {
       viewer.remove();
     };

@@ -33,7 +33,10 @@ const initialState = {
   reverseGeoNearButton: false,
   cursor:'default',
   mapillaryData:false,
-  polyGonData:null
+  polyGonData:null,
+  singleMapillaryData:null,
+  imgId:null,
+  scatterData:null,
 };
 
 const mapSlice = createSlice({
@@ -140,7 +143,17 @@ const mapSlice = createSlice({
     
     setMapillaryData: (state, action) => {
       state.mapillaryData = action.payload;
-
+    },    
+    
+    setSingleMapillaryData: (state, action) => {
+      state.singleMapillaryData = action.payload;
+    },
+    setImgId: (state, action) => {
+      state.imgId = action.payload;
+    }, 
+    setScatterData: (state, action) => {
+      state.scatterData = action.payload;
+      console.log(action.payload)
     },
   },
 });
@@ -176,6 +189,9 @@ export const {
   setUsageData,
   setReverseGeoNearButton,
   setPolyGonData,
-  setMapillaryData
+  setMapillaryData,
+  setSingleMapillaryData,
+  setImgId,
+  setScatterData
 } = mapSlice.actions;
 export default mapSlice.reducer;
