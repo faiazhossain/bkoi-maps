@@ -45,8 +45,8 @@ const NearByCard = () => {
     dispatch(setReverseGeoNearButton(false));
     if (reverseGeoCode) {
       dispatch(setMapData(null));
-      const lat = reverseGeoCode[0].latitude;
-      const lng = reverseGeoCode[0].longitude;
+      const lat = reverseGeoCode?.place.latitude;
+      const lng = reverseGeoCode?.place.longitude;
       const data = { lat, lng };
       dispatch(setReverseGeoLngLat(data));
     }

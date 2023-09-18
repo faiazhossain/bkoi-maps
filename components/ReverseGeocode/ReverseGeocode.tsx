@@ -30,7 +30,7 @@ const ReverseGeocode = () => {
   const reverseGeoCode: any = useAppSelector(
     (state: any) => state?.map?.reverseGeoCode
   );
-
+    console.log(reverseGeoCode.place,'faiaz2')
   // for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -57,10 +57,10 @@ const ReverseGeocode = () => {
           {/* showing image */}
           <div className="searchDetails" style={{ borderRadius: '20px', width:'100%', height:'288px' }}>
             {
-            reverseGeoCode[0]?.images?.length > 0 ? (
+            reverseGeoCode?.place?.images?.length > 0 ? (
             //   <Carousel arrows={true} style={{ borderRadius: '20px', width:'100%', height:'288px' }}>
             //   {
-            //     reverseGeoCode[0]?.images
+            //     reverseGeoCode?.place?.images
             //       .slice()
             //       .reverse() // Reverse the order of images
             //       .map((image: any) => (
@@ -82,7 +82,7 @@ const ReverseGeocode = () => {
             // </Carousel>
             <Carousel arrows={true} style={{ borderRadius: '20px', width:'100%', height:'288px' }}>
                 {
-                  reverseGeoCode[0]?.images
+                  reverseGeoCode?.place?.images
                     .slice()
                     .reverse() // Reverse the order of images
                     .map((image: any) => (
@@ -137,41 +137,41 @@ const ReverseGeocode = () => {
           </div>
           <h2 style={{marginTop:'14px'}}>
             {
-            reverseGeoCode[0]?.business_name ||
-            reverseGeoCode[0]?.place_name ||
-            reverseGeoCode[0]?.label 
+            reverseGeoCode?.place?.business_name ||
+            reverseGeoCode?.place?.place_name ||
+            reverseGeoCode?.place?.label 
             }
           </h2>
           {/* Address name */}
-          <p style={{marginTop: '10px'}}>{reverseGeoCode[0]?.Address || reverseGeoCode[0]?.business_name}{reverseGeoCode[0]?.area ?`, ${reverseGeoCode[0]?.area}`:''}{reverseGeoCode[0]?.city ? `, ${reverseGeoCode[0]?.city}. `: ''}</p>
-          <p style={{fontWeight: '400', marginTop:'10px' }} className="_color_light"> {reverseGeoCode[0]?.subType}</p>
-          {reverseGeoCode[0]?.additional?.contact && (
+          <p style={{marginTop: '10px'}}>{reverseGeoCode?.place?.Address || reverseGeoCode?.place?.business_name}{reverseGeoCode?.place?.area ?`, ${reverseGeoCode?.place?.area}`:''}{reverseGeoCode?.place?.city ? `, ${reverseGeoCode?.place?.city}. `: ''}</p>
+          <p style={{fontWeight: '400', marginTop:'10px' }} className="_color_light"> {reverseGeoCode?.place?.subType}</p>
+          {reverseGeoCode?.place?.additional?.contact && (
             <div style={{display:'flex', alignItems:'center', marginTop:'20px'}}> 
-              {JSON.parse(reverseGeoCode[0]?.additional.contact)[0]?.value && <p style={{ display:'flex', alignItems:'center',fontSize:'18px', color:'#279EFF'}}><HiOutlineMail/></p> }  
+              {JSON.parse(reverseGeoCode?.place?.additional.contact)[0]?.value && <p style={{ display:'flex', alignItems:'center',fontSize:'18px', color:'#279EFF'}}><HiOutlineMail/></p> }  
               {<p style={{marginLeft:'30px'}}>
-              {JSON.parse(reverseGeoCode[0]?.additional.contact)[0]?.value}
+              {JSON.parse(reverseGeoCode?.place?.additional.contact)[0]?.value}
               </p>}
             </div>
           )}
           
-          {reverseGeoCode[0]?.additional?.contact && (
+          {reverseGeoCode?.place?.additional?.contact && (
             <div style={{display:'flex', alignItems:'center',marginTop:'10px'}}>
-              {JSON.parse(reverseGeoCode[0]?.additional.contact)[1]?.value && <p style={{display:'flex', alignItems:'center',fontSize:'16px', color:'#279EFF'}}><BsFillTelephoneFill/></p>}
+              {JSON.parse(reverseGeoCode?.place?.additional.contact)[1]?.value && <p style={{display:'flex', alignItems:'center',fontSize:'16px', color:'#279EFF'}}><BsFillTelephoneFill/></p>}
               <p style={{marginLeft:'30px'}}>
-              {JSON.parse(reverseGeoCode[0]?.additional.contact)[1]?.value}
+              {JSON.parse(reverseGeoCode?.place?.additional.contact)[1]?.value}
               </p> 
             </div>
           )}
           
-          {reverseGeoCode[0]?.additional?.contact && (
+          {reverseGeoCode?.place?.additional?.contact && (
             <div style={{display:'flex', alignItems:'center',marginTop:'10px'}}>
-              {JSON.parse(reverseGeoCode[0]?.additional.contact)[2]?.value && <p style={{display:'flex', alignItems:'center',fontSize:'16px', color:'#279EFF'}}><BiWorld/></p>}
-              <a href={JSON.parse(reverseGeoCode[0]?.additional.contact)[2]?.value} style={{marginLeft:'30px'}}>
-              {JSON.parse(reverseGeoCode[0]?.additional.contact)[2]?.value}
+              {JSON.parse(reverseGeoCode?.place?.additional.contact)[2]?.value && <p style={{display:'flex', alignItems:'center',fontSize:'16px', color:'#279EFF'}}><BiWorld/></p>}
+              <a href={JSON.parse(reverseGeoCode?.place?.additional.contact)[2]?.value} style={{marginLeft:'30px'}}>
+              {JSON.parse(reverseGeoCode?.place?.additional.contact)[2]?.value}
               </a> 
             </div>
           )}
-          {/* <p>Contact: {JSON.parse(reverseGeoCode[0]?.additional.contact[0])}</p> */}
+          {/* <p>Contact: {JSON.parse(reverseGeoCode?.place?.additional.contact[0])}</p> */}
           <Divider />
           {/* Direction part */}  
           <Row>
@@ -212,11 +212,11 @@ const ReverseGeocode = () => {
                   <Divider />
                   <Row className="_margin_top_md">
                     <Col sm={8}>
-                      {reverseGeoCode[0]?.images?.length > 0 ? (
+                      {reverseGeoCode?.place?.images?.length > 0 ? (
                         <Image
                           src={
-                            reverseGeoCode[0]?.images
-                              ? `https://api.bmapsbd.com/${reverseGeoCode[0]?.images[0]?.image_link}`
+                            reverseGeoCode?.place?.images
+                              ? `https://api.bmapsbd.com/${reverseGeoCode?.place?.images[0]?.image_link}`
                               : ""
                           }
                           alt=""
@@ -237,10 +237,10 @@ const ReverseGeocode = () => {
                     </Col>
                     <Col sm={16} className="_flex_col_around">
                       <p style={{ fontSize: "14px" }}>
-                        <b>Address:</b> {reverseGeoCode[0]?.Address}
+                        <b>Address:</b> {reverseGeoCode?.place?.Address}
                       </p>
                       <p style={{ fontSize: "14px" }}>
-                        <b>City:</b> {reverseGeoCode[0]?.city}
+                        <b>City:</b> {reverseGeoCode?.place?.city}
                       </p>
                     </Col>
                   </Row>
@@ -248,12 +248,12 @@ const ReverseGeocode = () => {
                   <p style={{ color: "#bbb" }}>Copy link</p>
                   <Paragraph
                     copyable={{
-                      text: `${LOCAL_BASE_URL}?place=${reverseGeoCode[0]?.uCode}/`,
-                      onCopy: () => dispatch(setuCodeForLink(reverseGeoCode[0]?.uCode))
+                      text: `${LOCAL_BASE_URL}?place=${reverseGeoCode?.place?.uCode}/`,
+                      onCopy: () => dispatch(setuCodeForLink(reverseGeoCode?.place?.uCode))
                     }}
                     style={{ textDecoration: "underline", marginTop: "5px" }}
                   >
-                    {LOCAL_BASE_URL}?place={reverseGeoCode[0]?.uCode}
+                    {LOCAL_BASE_URL}?place={reverseGeoCode?.place?.uCode}
                   </Paragraph>
                 </Modal>
               </Row>
@@ -276,48 +276,48 @@ const ReverseGeocode = () => {
             Information
           </p>
 
-          {reverseGeoCode[0] && (
+          {reverseGeoCode?.place && (
             <Row align="middle" justify="center" style={{ marginTop: "10px" }}>
               <Col span={6}>
                 <HomeOutlined style={{ fontSize: 24 }} />
               </Col>
-              <Col span={18}>{reverseGeoCode[0]?.address_bn || reverseGeoCode[0]?.Address }</Col>
+              <Col span={18}>{reverseGeoCode?.place?.address_bn || reverseGeoCode?.place?.Address }</Col>
             </Row>
           )}
 
-          {reverseGeoCode[0]?.uCode && (
+          {reverseGeoCode?.place?.uCode && (
             <Row align="middle" justify="center" style={{ marginTop: "10px" }}>
               <Col span={6}>
                 <label>UCode: </label>
               </Col>
               <Col span={18}>
                 <Text className="blueBorder">
-                  {reverseGeoCode[0]?.uCode}
+                  {reverseGeoCode?.place?.uCode}
                 </Text>
               </Col>
             </Row>
           )}
 
-          {reverseGeoCode[0]?.district && (
+          {reverseGeoCode?.place?.district && (
             <Row align="middle" justify="center" style={{ marginTop: "16px" }}>
               <Col span={6}>
                 <label>District: </label>
               </Col>
               <Col span={18}>
                 <Text className="greenBorder">
-                  {reverseGeoCode[0]?.district}
+                  {reverseGeoCode?.place?.district}
                 </Text>
               </Col>
             </Row>
           )}
 
-          {reverseGeoCode[0]?.postCode && (
+          {reverseGeoCode?.place?.postCode && (
             <Row align="middle" justify="center" style={{ marginTop: "14px" }}>
               <Col span={6}>
                 <label>Post Code: </label>
               </Col>
               <Col span={18}>
-                <Text className="redBorder">{reverseGeoCode[0]?.postCode}</Text>
+                <Text className="redBorder">{reverseGeoCode?.place?.postCode}</Text>
               </Col>
             </Row>
           )}

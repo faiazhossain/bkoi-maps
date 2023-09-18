@@ -95,6 +95,7 @@ const MainMap = () => {
   const mapVisibility = useAppSelector(
     (state) => state?.map?.mapVisibility
   );
+  console.log(mapVisibility, 'current')
   const nearByClickedLocationData = useAppSelector(
     (state) => state?.map?.nearByClickedLocation
   );
@@ -121,6 +122,7 @@ const MainMap = () => {
     )
       .then((response) => response.json())
       .then((data) => {
+        // localStorage.setItem('admin_token', 'MjYyMzpHOVkzWFlGNjZG');
         const availableOpenMapData = data?.layers?.filter(
           (layer) => layer.id && layer["source-layer"] === ("barikoi_poi")
           // (layer) => layer.id && layer["source-layer"] === ("poi")
@@ -219,7 +221,7 @@ useEffect(() => {
   )
     .then((response) => response.json())
     .then((data) => {
-      console.log(data,'One')
+      // console.log(data,'One')
     // dispatch(setScatterData(data.computed_geometry.coordinates));
     dispatch(setScatterData(data.computed_geometry.coordinates))
     })
@@ -227,7 +229,7 @@ useEffect(() => {
 }, [imgId]);
 
   const modifiedScatterData = [{coordinates:scatterData}];
-  console.log(imgId,'Faiaz')
+  // console.log(imgId,'Faiaz')
 
  
   // distance matrix layers
@@ -311,13 +313,17 @@ useEffect(() => {
       id: 'scatterplot-layer',
       data:modifiedScatterData,
       pickable: true,
-      opacity: 0.8,
+      opacity: 1,
       stroked: true,
       filled: true,
-      radiusScale: 6,
+      radiusScale: 20,
+      // getElevation:30,
+      // radiusUnits:20,
+      // lineWidthScale:20,
       radiusMinPixels: 1,
-      radiusMaxPixels: 100,
-      lineWidthMinPixels: 1,
+      radiusMaxPixels: 8,
+      lineWidthMaxPixels:1,
+      // lineWidthMinPixels: .5,
       getPosition: d => d.coordinates,
       getRadius: d => Math.sqrt(d.exits),
       getFillColor: d => [255, 140, 0],

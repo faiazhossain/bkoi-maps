@@ -8,8 +8,9 @@ export const LOCAL_BASE_URL = "http://maps.barikoi.com" || "";
 export const API = {
   // AUTOCOMPLETE: `https://barikoi.xyz/v1/api/search/autocomplete/${MAP_API_ACCESS_TOKEN}/place?q=`,
   AUTOCOMPLETE: `https://elastic.bmapsbd.com/test/autocomplete/search?q=`,
-  REVERSE_GEO: `https://barikoi.xyz/v1/api/search/reverse/${MAP_API_ACCESS_TOKEN}/geocode?`,
-  SEARCH_BY_CODE: `https://api.bmapsbd.com/place/`,
+  REVERSE_GEO: `https://api.admin.barikoi.com/api/v2/search/reverse/geocode?`,
+  // SEARCH_BY_CODE: `https://api.bmapsbd.com/place/`,
+  SEARCH_BY_CODE: `https://api.admin.barikoi.com/api/v2/place/without/auth`,
   RUPANTOR: `https://barikoi.xyz/v2/api/search/rupantor/geocode?api_key=${MAP_API_ACCESS_TOKEN}`,
   NEARBY_URL: `https://elastic.bmapsbd.com/test/parse/search`,
   USAGE_DATA: `https://api.bmapsbd.com/insert-search-log`,

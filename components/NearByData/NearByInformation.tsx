@@ -151,6 +151,8 @@ const NearByInformation = () => {
                           <Image
                             src={
                               uCodeUrl?.images
+                                // ? `https://api.bmapsbd.com/${uCodeUrl?.images[0]?.image_link}`
+                                
                                 ? `https://api.bmapsbd.com/${uCodeUrl?.images[0]?.image_link}`
                                 : ""
                             }

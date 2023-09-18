@@ -35,6 +35,8 @@ interface SearchComponentProps {
 }
 
 function SearchComponent({ onLocationSelect }: SearchComponentProps) {
+
+  console.log('current')
   // next router
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -220,10 +222,10 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
   const revGeoValue = nearByClickedLocation ? nearByClickedLocation.business_name :
   (uCodeData && (uCodeData?.business_name || uCodeData?.Address)) || 
   (reverseGeoCode &&
-      (reverseGeoCode[0]?.business_name ||
-        reverseGeoCode[0]?.place_name||
-        reverseGeoCode[0]?.Address ||
-        reverseGeoCode[0]?.address_bn 
+      (reverseGeoCode?.place?.business_name ||
+        reverseGeoCode?.place?.place_name||
+        reverseGeoCode?.place?.Address ||
+        reverseGeoCode?.place?.address_bn 
         )) || (mapData && (mapData?.Address || mapData?.business_name)) || 
     value;
 
@@ -256,9 +258,9 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
         </AutoComplete>
 
         {((reverseGeoCode &&
-          (reverseGeoCode[0]?.Address ||
-            reverseGeoCode[0]?.address_bn ||
-            reverseGeoCode[0]?.business_name)) ||
+          (reverseGeoCode?.place?.Address ||
+            reverseGeoCode?.place?.address_bn ||
+            reverseGeoCode?.place?.business_name)) ||
           value) && (
           <Button
             onClick={handleClear}

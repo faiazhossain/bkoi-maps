@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Popover, Switch, Tooltip } from 'antd';
 import { useAppDispatch } from '@/redux/store';
-import { setImgId, setMapillaryData, setSingleMapillaryData } from '@/redux/reducers/mapReducer';
+import { setImgId, setMapillaryData, setScatterData, setSingleMapillaryData } from '@/redux/reducers/mapReducer';
 import { FaStreetView } from 'react-icons/fa';
 
 const SwitchButton: React.FC<{ id: (value: null) => void }> = ({ id }) => {
@@ -17,6 +17,7 @@ const SwitchButton: React.FC<{ id: (value: null) => void }> = ({ id }) => {
       dispatch(setSingleMapillaryData(null))
       id(null);
       setChecked(true);
+      dispatch(setScatterData(null));
     }
   };
 

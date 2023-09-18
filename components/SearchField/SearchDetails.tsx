@@ -29,6 +29,7 @@ const SearchDetails = () => {
   const reverseGeoCodeLatLng: any = useAppSelector((state: any) => state?.map?.reverseGeoLngLat);
   const nearBySearchedData: any = useAppSelector((state) => state?.map?.nearBySearchedLocation);
   const reverseGeoNearButton: any = useAppSelector((state) => state?.map?.reverseGeoNearButton);
+
   const mapillaryData: any = useAppSelector((state) => state?.map?.mapillaryData);
   useEffect(()=> {
     if (mapData?.uCode) {
@@ -36,9 +37,10 @@ const SearchDetails = () => {
     }
   }, [mapData?.uCode])
 
+
+
   return (
     <div
-
       className={mapData || reverseGeoCode  ? `searchbarDetails` : ""}
       style={{
         height: mapData || reverseGeoCode ? `92vh` : 0,

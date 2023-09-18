@@ -30,8 +30,8 @@ const NearbyButton: React.FC = () => {
   );  
   const reverseGeoCode: any = useAppSelector((state: { map: { reverseGeoCode: any; }; }) => state?.map?.reverseGeoCode ?? "");
   const handleSelectATM = () => {
-    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode[0]?.latitude ;
-    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode[0]?.longitude;
+    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode?.place?.latitude ;
+    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode?.place?.longitude;
     const value = "ATM near me";
     const data = { latitude, longitude, value };
     dispatch(handleFetchNearby(data));
@@ -41,8 +41,8 @@ const NearbyButton: React.FC = () => {
   };
 
   const handleSelectSchool = () => {
-    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode[0]?.latitude;
-    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode[0]?.longitude; 
+    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode?.place?.latitude;
+    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode?.place?.longitude; 
     const value = "School near me";
     const data = { latitude, longitude, value };
     dispatch(handleFetchNearby(data));
@@ -52,8 +52,8 @@ const NearbyButton: React.FC = () => {
   };
 
   const handleSelectClinic = () => {
-    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode[0]?.latitude;
-    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode[0]?.longitude;
+    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode?.place?.latitude;
+    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode?.place?.longitude;
     const value = "Clinic near me";
     const data = { latitude, longitude, value };
     dispatch(handleFetchNearby(data));
@@ -62,8 +62,8 @@ const NearbyButton: React.FC = () => {
     dispatch(setNearByButton("Clinic"));
   };
   const handleSelectBank = () => {
-    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode[0]?.latitude;
-    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode[0]?.longitude;
+    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode?.place?.latitude;
+    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode?.place?.longitude;
     const value = "Bank near me";
     const data = { latitude, longitude, value };
     dispatch(handleFetchNearby(data));
@@ -73,8 +73,8 @@ const NearbyButton: React.FC = () => {
   };
 
   const handleSelectParking = () => {
-    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode[0]?.latitude;
-    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode[0]?.longitude;
+    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode?.place?.latitude;
+    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode?.place?.longitude;
     const value = "Parking near me";
     const data = { latitude, longitude, value };
     dispatch(handleFetchNearby(data));
@@ -84,8 +84,8 @@ const NearbyButton: React.FC = () => {
   };
 
   const handleSelectElectricPark = () => {
-    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode[0]?.latitude;
-    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode[0]?.longitude;
+    const latitude = selectedLocation?.latitude || reverseGeoLngLat?.lat || mapData?.latitude || reverseGeoCode?.place?.latitude;
+    const longitude = selectedLocation?.longitude || reverseGeoLngLat?.lng || mapData?.longitude || reverseGeoCode?.place?.longitude;
     const value = "Park near me";
     const data = { latitude, longitude, value };
     dispatch(handleFetchNearby(data));

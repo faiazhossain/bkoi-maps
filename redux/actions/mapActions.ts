@@ -84,11 +84,19 @@ export const handleMapData = createAsyncThunk(
   "search/mapData",
   async (data: any, { dispatch }) => {
     try {
-      const res = await axios.get(`${API.SEARCH_BY_CODE}${data}`);
+      // const token = localStorage.getItem('admin_token');
+      // console.log(token);
+      const headers = { headers: { Authorization: `Bearer ${ 'MjYyMzpHOVkzWFlGNjZG' }` } }
+      // const res = await axios.get(`${API.SEARCH_BY_CODE}${data}`);
+      const res = await axios.get(`${ API.SEARCH_BY_CODE }/${ data }`, headers)
+
+      // await axios.get(`${ API.USER_TRANSACTION }`, { headers: { Authorization: `Bearer ${ token }` }, params: options?.params, signal: options?.signal })
+
       try {
         const dataformap = await axios.get(
-          `https://api.bmapsbd.com/reverse/without/auth?latitude=${ res.data.latitude }&longitude=${ res.data.longitude }`
+          `${API.REVERSE_GEO}latitude=${ res.data.latitude }&longitude=${ res.data.longitude }`
         );
+        console.log(dataformap,'console 1');
         dispatch(setReverseGeoCode( dataformap?.data ));
       } catch (err) {
         console.error(err);
@@ -151,8 +159,9 @@ export const handleGetPlacesWthGeocode = createAsyncThunk(
     const { lat, lng } = data;
     try {
       const res = await axios.get(
-        `https://api.bmapsbd.com/reverse/without/auth?latitude=${lat}&longitude=${lng}`
+        `${API.REVERSE_GEO}latitude=${lat}&longitude=${lng}`
       );
+      console.log(res?.data,'console 2');
       dispatch(setReverseGeoCode(res?.data));
       try {
         const polyGonArea= await axios.get(
@@ -175,12 +184,18 @@ export const handleSearchedPlaceByUcode = createAsyncThunk(
   async (data: any, { dispatch }) => {
 
     try {
-      const res = await axios.get(`${API.SEARCH_BY_CODE}${data}`);
+      // const token = localStorage.getItem('admin_token');
+      const headers = { headers: { Authorization: `Bearer ${ 'MjYyMzpHOVkzWFlGNjZG' }` } }
+      // const res = await axios.get(`${API.SEARCH_BY_CODE}${data}`);
+      const res = await axios.get(`${ API.SEARCH_BY_CODE }/${ data }`, headers)
+
+      console.log(res,'FAIAAAZ2');
       dispatch(setUCode(res?.data));
       try {
         const dataforucode = await axios.get(
-          `https://api.bmapsbd.com/reverse/without/auth?latitude=${res.data.latitude}&longitude=${res.data.longitude}`
+          `${API.REVERSE_GEO}latitude=${res.data.latitude}&longitude=${res.data.longitude}`
         );
+        console.log(dataforucode,'console 3')
         dispatch(setReverseGeoCode(dataforucode?.data));
         const data = {lat:res.data.latitude, lng:res.data.longitude}
         dispatch(setReverseGeoLngLat(data));
@@ -216,8 +231,9 @@ export const handleSearchedPlaceByUcode = createAsyncThunk(
         const responseData = await response.json();
         try {
           const dataforucode = await axios.get(
-            `https://api.bmapsbd.com/reverse/without/auth?latitude=${responseData.geocoded_address.latitude}&longitude=${responseData.geocoded_address.longitude}`
+            `${API.REVERSE_GEO}latitude=${responseData.geocoded_address.latitude}&longitude=${responseData.geocoded_address.longitude}`
           );
+          console.log(dataforucode,'4')
           dispatch(setReverseGeoCode(dataforucode?.data));
           const data= {lat:responseData.geocoded_address.latitude, lng:responseData.geocoded_address.longitude};
           dispatch(setReverseGeoLngLat(data))
@@ -253,8 +269,9 @@ export const handleRupantorGeocode = createAsyncThunk(
 
       try {
         const dataforucode = await axios.get(
-          `https://api.bmapsbd.com/reverse/without/auth?latitude=${responseData.geocoded_address.latitude}&longitude=${responseData.geocoded_address.longitude}`
+          `${API.REVERSE_GEO}latitude=${responseData.geocoded_address.latitude}&longitude=${responseData.geocoded_address.longitude}`
         );
+        console.log(dataforucode,'5')
         dispatch(setReverseGeoCode(dataforucode?.data));
         const data= {lat:responseData.geocoded_address.latitude, lng:responseData.geocoded_address.longitude};
         dispatch(setReverseGeoLngLat(data))

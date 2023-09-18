@@ -153,7 +153,7 @@ const mapSlice = createSlice({
     }, 
     setScatterData: (state, action) => {
       state.scatterData = action.payload;
-      console.log(action.payload)
+      // console.log(action.payload)
     },
   },
 });
