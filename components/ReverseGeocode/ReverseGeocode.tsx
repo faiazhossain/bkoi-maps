@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -19,6 +19,8 @@ import NearbyButton from "../Common/NearbyButton";
 import { setuCodeForLink } from "@/redux/reducers/mapReducer";
 import { HiOutlineMail } from "react-icons/hi";
 import { BiWorld } from "react-icons/bi";
+import { json } from "stream/consumers";
+import axios from "axios";
 
 // import constants
 const { Text, Paragraph } = Typography;
@@ -30,7 +32,7 @@ const ReverseGeocode = () => {
   const reverseGeoCode: any = useAppSelector(
     (state: any) => state?.map?.reverseGeoCode
   );
-    console.log(reverseGeoCode.place,'faiaz2')
+
   // for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -42,6 +44,37 @@ const ReverseGeocode = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  // const [responseArray, setResponseArray] = useState({});
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  useEffect(() => {
+    if (reverseGeoCode) {
+      try {
+        const headers = { Authorization: `Bearer MjYyMzpHOVkzWFlGNjZG` };
+        const promises = reverseGeoCode?.place?.images.map((image: { key: string }) => {
+          // Specify the response type explicitly
+          return axios.get(`https://api.admin.barikoi.com/api/v2/get-place-image-url-without-auth?key=${image.key}`, { headers }) as Promise<{ data: { data: { url: string } } }>;
+        });
+
+        // Use Promise.all() to wait for all requests to complete
+        Promise.all(promises)
+          .then((responses) => {
+            // Extract and store image URLs from responses
+            const urls = responses.map((response) => response.data.url);
+            setImageUrls(urls);
+          })
+          .catch((error) => {
+            // Handle errors specific to the requests
+          });
+      } catch (error) {
+        // Handle errors specific to the code executed within the try block
+      }
+    } else {
+      // Code to execute when reverseGeoCode is not true (optional)
+    }
+  }, [reverseGeoCode]); // Add dependencies as needed
+  
+  
   
   return (
     <div
@@ -51,7 +84,7 @@ const ReverseGeocode = () => {
         borderRadius: "10px",
       }}
     >
-     {(reverseGeoCode && !reverseGeoCode?.status) && 
+     {(reverseGeoCode && reverseGeoCode?.status) && 
       (
         <Card className="_width_lg">
           {/* showing image */}
@@ -81,19 +114,15 @@ const ReverseGeocode = () => {
             //   }
             // </Carousel>
             <Carousel arrows={true} style={{ borderRadius: '20px', width:'100%', height:'288px' }}>
-                {
+                {/* {
                   reverseGeoCode?.place?.images
                     .slice()
                     .reverse() // Reverse the order of images
                     .map((image: any) => (
-
-                      
-
                       <div style={{ borderRadius: '20px' }} key={image.id}>
-                        {image.image_link ? (
-                          
+                        {image?.key ? (
                           <Image
-                            src={`https://api.bmapsbd.com/${image?.image_link}`}
+                            src={`https://api.bmapsbd.com/${image?.key}`}
                             alt=""
                             style={{
                               objectFit: 'contain',
@@ -109,7 +138,30 @@ const ReverseGeocode = () => {
                         )}
                       </div>
                     ))
-                }
+                } */}
+                
+                  {imageUrls.slice()
+                    .reverse().map((url, index) => (
+                    <div style={{ borderRadius: '20px' }} key={index}>
+                      {url ? (
+                        <Image
+                          src={url}
+                          alt={`Image ${index}`}
+                          style={{
+                            objectFit: 'contain',
+                            borderRadius: '20px',
+                          }}
+                          className="imageFit"
+                          width={340}
+                          height={288}
+                        />
+                      ) : (
+                        // You can display a placeholder or an error message here
+                        <div>Image not found</div>
+                      )}
+                    </div>
+                  ))}
+          
             </Carousel>
             
             ) : (
@@ -143,35 +195,37 @@ const ReverseGeocode = () => {
             }
           </h2>
           {/* Address name */}
-          <p style={{marginTop: '10px'}}>{reverseGeoCode?.place?.Address || reverseGeoCode?.place?.business_name}{reverseGeoCode?.place?.area ?`, ${reverseGeoCode?.place?.area}`:''}{reverseGeoCode?.place?.city ? `, ${reverseGeoCode?.place?.city}. `: ''}</p>
-          <p style={{fontWeight: '400', marginTop:'10px' }} className="_color_light"> {reverseGeoCode?.place?.subType}</p>
-          {reverseGeoCode?.place?.additional?.contact && (
+          {/* <p style={{marginTop: '10px'}}>{reverseGeoCode?.place?.address || reverseGeoCode?.place?.business_name}{reverseGeoCode?.place?.area ?`, ${reverseGeoCode?.place?.area}`:''}{reverseGeoCode?.place?.city ? `, ${reverseGeoCode?.place?.city}. `: ''}</p> */}
+          <p style={{marginTop: '10px'}}>{reverseGeoCode?.place?.address || reverseGeoCode?.place?.business_name}</p>
+          <p style={{fontWeight: '400', marginTop:'10px' }} className="_color_light"> {reverseGeoCode?.place?.sub_type}</p>
+
+          {reverseGeoCode?.place?.places_additional_data && (
             <div style={{display:'flex', alignItems:'center', marginTop:'20px'}}> 
-              {JSON.parse(reverseGeoCode?.place?.additional.contact)[0]?.value && <p style={{ display:'flex', alignItems:'center',fontSize:'18px', color:'#279EFF'}}><HiOutlineMail/></p> }  
+              {JSON.parse(reverseGeoCode?.place?.places_additional_data)?.contact?.email && <p style={{ display:'flex', alignItems:'center',fontSize:'18px', color:'#279EFF'}}><HiOutlineMail/></p> }  
               {<p style={{marginLeft:'30px'}}>
-              {JSON.parse(reverseGeoCode?.place?.additional.contact)[0]?.value}
+              {JSON.parse(reverseGeoCode?.place?.places_additional_data)?.contact?.email}
               </p>}
             </div>
           )}
           
-          {reverseGeoCode?.place?.additional?.contact && (
+          {reverseGeoCode?.place?.places_additional_data && (
             <div style={{display:'flex', alignItems:'center',marginTop:'10px'}}>
-              {JSON.parse(reverseGeoCode?.place?.additional.contact)[1]?.value && <p style={{display:'flex', alignItems:'center',fontSize:'16px', color:'#279EFF'}}><BsFillTelephoneFill/></p>}
+              {JSON.parse(reverseGeoCode?.place?.places_additional_data)?.contact?.phone&& <p style={{display:'flex', alignItems:'center',fontSize:'16px', color:'#279EFF'}}><BsFillTelephoneFill/></p>}
               <p style={{marginLeft:'30px'}}>
-              {JSON.parse(reverseGeoCode?.place?.additional.contact)[1]?.value}
+              {JSON.parse(reverseGeoCode?.place?.places_additional_data)?.contact?.phone}
               </p> 
             </div>
           )}
           
-          {reverseGeoCode?.place?.additional?.contact && (
+          {reverseGeoCode?.place?.places_additional_data && (
             <div style={{display:'flex', alignItems:'center',marginTop:'10px'}}>
-              {JSON.parse(reverseGeoCode?.place?.additional.contact)[2]?.value && <p style={{display:'flex', alignItems:'center',fontSize:'16px', color:'#279EFF'}}><BiWorld/></p>}
-              <a href={JSON.parse(reverseGeoCode?.place?.additional.contact)[2]?.value} style={{marginLeft:'30px'}}>
-              {JSON.parse(reverseGeoCode?.place?.additional.contact)[2]?.value}
+              {JSON.parse(reverseGeoCode?.place?.places_additional_data)?.contact?.website && <p style={{display:'flex', alignItems:'center',fontSize:'16px', color:'#279EFF'}}><BiWorld/></p>}
+              <a href={JSON.parse(reverseGeoCode?.place?.places_additional_data)?.contact?.website} style={{marginLeft:'30px'}}>
+              {JSON.parse(reverseGeoCode?.place?.places_additional_data)?.contact?.website}
               </a> 
             </div>
           )}
-          {/* <p>Contact: {JSON.parse(reverseGeoCode?.place?.additional.contact[0])}</p> */}
+
           <Divider />
           {/* Direction part */}  
           <Row>
@@ -215,8 +269,8 @@ const ReverseGeocode = () => {
                       {reverseGeoCode?.place?.images?.length > 0 ? (
                         <Image
                           src={
-                            reverseGeoCode?.place?.images
-                              ? `https://api.bmapsbd.com/${reverseGeoCode?.place?.images[0]?.image_link}`
+                            imageUrls
+                              ? `${imageUrls[0]}`
                               : ""
                           }
                           alt=""
@@ -237,7 +291,7 @@ const ReverseGeocode = () => {
                     </Col>
                     <Col sm={16} className="_flex_col_around">
                       <p style={{ fontSize: "14px" }}>
-                        <b>Address:</b> {reverseGeoCode?.place?.Address}
+                        <b>Address:</b> {reverseGeoCode?.place?.address}
                       </p>
                       <p style={{ fontSize: "14px" }}>
                         <b>City:</b> {reverseGeoCode?.place?.city}
@@ -248,12 +302,15 @@ const ReverseGeocode = () => {
                   <p style={{ color: "#bbb" }}>Copy link</p>
                   <Paragraph
                     copyable={{
-                      text: `${LOCAL_BASE_URL}?place=${reverseGeoCode?.place?.uCode}/`,
-                      onCopy: () => dispatch(setuCodeForLink(reverseGeoCode?.place?.uCode))
+                      text: `${LOCAL_BASE_URL}?place=${reverseGeoCode?.place?.place_code
+                      }/`,
+                      onCopy: () => dispatch(setuCodeForLink(reverseGeoCode?.place?.place_code
+                        ))
                     }}
                     style={{ textDecoration: "underline", marginTop: "5px" }}
                   >
-                    {LOCAL_BASE_URL}?place={reverseGeoCode?.place?.uCode}
+                    {LOCAL_BASE_URL}?place={reverseGeoCode?.place?.place_code
+}
                   </Paragraph>
                 </Modal>
               </Row>
@@ -281,18 +338,18 @@ const ReverseGeocode = () => {
               <Col span={6}>
                 <HomeOutlined style={{ fontSize: 24 }} />
               </Col>
-              <Col span={18}>{reverseGeoCode?.place?.address_bn || reverseGeoCode?.place?.Address }</Col>
+              <Col span={18}>{reverseGeoCode?.place?.address_bn || reverseGeoCode?.place?.address }</Col>
             </Row>
           )}
 
-          {reverseGeoCode?.place?.uCode && (
+          {reverseGeoCode?.place?.place_code && (
             <Row align="middle" justify="center" style={{ marginTop: "10px" }}>
               <Col span={6}>
-                <label>UCode: </label>
+                <label>Place Code: </label>
               </Col>
               <Col span={18}>
                 <Text className="blueBorder">
-                  {reverseGeoCode?.place?.uCode}
+                  {reverseGeoCode?.place?.place_code}
                 </Text>
               </Col>
             </Row>
@@ -311,13 +368,13 @@ const ReverseGeocode = () => {
             </Row>
           )}
 
-          {reverseGeoCode?.place?.postCode && (
+          {reverseGeoCode?.place?.postcode && (
             <Row align="middle" justify="center" style={{ marginTop: "14px" }}>
               <Col span={6}>
                 <label>Post Code: </label>
               </Col>
               <Col span={18}>
-                <Text className="redBorder">{reverseGeoCode?.place?.postCode}</Text>
+                <Text className="redBorder">{reverseGeoCode?.place?.postcode}</Text>
               </Col>
             </Row>
           )}

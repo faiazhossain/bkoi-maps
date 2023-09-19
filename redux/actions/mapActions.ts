@@ -84,8 +84,6 @@ export const handleMapData = createAsyncThunk(
   "search/mapData",
   async (data: any, { dispatch }) => {
     try {
-      // const token = localStorage.getItem('admin_token');
-      // console.log(token);
       const headers = { headers: { Authorization: `Bearer ${ 'MjYyMzpHOVkzWFlGNjZG' }` } }
       // const res = await axios.get(`${API.SEARCH_BY_CODE}${data}`);
       const res = await axios.get(`${ API.SEARCH_BY_CODE }/${ data }`, headers)
@@ -94,9 +92,8 @@ export const handleMapData = createAsyncThunk(
 
       try {
         const dataformap = await axios.get(
-          `${API.REVERSE_GEO}latitude=${ res.data.latitude }&longitude=${ res.data.longitude }`
+          `${API.REVERSE_GEO}latitude=${ res.data.latitude }&longitude=${ res.data.longitude }`, headers
         );
-        console.log(dataformap,'console 1');
         dispatch(setReverseGeoCode( dataformap?.data ));
       } catch (err) {
         console.error(err);
@@ -157,16 +154,18 @@ export const handleGetPlacesWthGeocode = createAsyncThunk(
   "search/searchPlacesWithGeocode",
   async (data: any, { dispatch }) => {
     const { lat, lng } = data;
+    const headers = { headers: { Authorization: `Bearer ${ 'MjYyMzpHOVkzWFlGNjZG' }` } }
     try {
       const res = await axios.get(
-        `${API.REVERSE_GEO}latitude=${lat}&longitude=${lng}`
+        `${API.REVERSE_GEO}latitude=${lat}&longitude=${lng}`,headers
       );
-      console.log(res?.data,'console 2');
       dispatch(setReverseGeoCode(res?.data));
+
       try {
         const polyGonArea= await axios.get(
-          `https://elastic.bmapsbd.com/test/autocomplete/search?q=${res.data[0].uCode}`
+          `https://elastic.bmapsbd.com/test/autocomplete/search?q=${res.data.place.place_code}`
         );
+
         dispatch(setPolyGonData(polyGonArea.data.places[0].bounds));
       } catch (err) {
         console.error(err);
@@ -188,20 +187,18 @@ export const handleSearchedPlaceByUcode = createAsyncThunk(
       const headers = { headers: { Authorization: `Bearer ${ 'MjYyMzpHOVkzWFlGNjZG' }` } }
       // const res = await axios.get(`${API.SEARCH_BY_CODE}${data}`);
       const res = await axios.get(`${ API.SEARCH_BY_CODE }/${ data }`, headers)
-
-      console.log(res,'FAIAAAZ2');
       dispatch(setUCode(res?.data));
       try {
         const dataforucode = await axios.get(
-          `${API.REVERSE_GEO}latitude=${res.data.latitude}&longitude=${res.data.longitude}`
+          `${API.REVERSE_GEO}latitude=${res.data.latitude}&longitude=${res.data.longitude}`,headers
         );
-        console.log(dataforucode,'console 3')
         dispatch(setReverseGeoCode(dataforucode?.data));
         const data = {lat:res.data.latitude, lng:res.data.longitude}
         dispatch(setReverseGeoLngLat(data));
+
         try {
           const polyGonArea= await axios.get(
-            `https://elastic.bmapsbd.com/test/autocomplete/search?q=${dataforucode.data[0].uCode}`
+            `https://elastic.bmapsbd.com/test/autocomplete/search?q=${dataforucode.data.place_code}`
           );
           dispatch(setPolyGonData(polyGonArea.data.places[0].bounds));
         } catch (err) {
@@ -229,11 +226,11 @@ export const handleSearchedPlaceByUcode = createAsyncThunk(
         }
   
         const responseData = await response.json();
+        const headers = { headers: { Authorization: `Bearer ${ 'MjYyMzpHOVkzWFlGNjZG' }` } }
         try {
           const dataforucode = await axios.get(
-            `${API.REVERSE_GEO}latitude=${responseData.geocoded_address.latitude}&longitude=${responseData.geocoded_address.longitude}`
+            `${API.REVERSE_GEO}latitude=${responseData.geocoded_address.latitude}&longitude=${responseData.geocoded_address.longitude}`,headers
           );
-          console.log(dataforucode,'4')
           dispatch(setReverseGeoCode(dataforucode?.data));
           const data= {lat:responseData.geocoded_address.latitude, lng:responseData.geocoded_address.longitude};
           dispatch(setReverseGeoLngLat(data))
@@ -266,12 +263,11 @@ export const handleRupantorGeocode = createAsyncThunk(
       }
 
       const responseData = await response.json();
-
+      const headers = { headers: { Authorization: `Bearer ${ 'MjYyMzpHOVkzWFlGNjZG' }` } }
       try {
         const dataforucode = await axios.get(
-          `${API.REVERSE_GEO}latitude=${responseData.geocoded_address.latitude}&longitude=${responseData.geocoded_address.longitude}`
+          `${API.REVERSE_GEO}latitude=${responseData.geocoded_address.latitude}&longitude=${responseData.geocoded_address.longitude}`,headers
         );
-        console.log(dataforucode,'5')
         dispatch(setReverseGeoCode(dataforucode?.data));
         const data= {lat:responseData.geocoded_address.latitude, lng:responseData.geocoded_address.longitude};
         dispatch(setReverseGeoLngLat(data))

@@ -14,7 +14,6 @@ import { useRouter } from "next/router";
 
 
 const SearchDetails = () => {
-
   // redux 
   const dispatch = useAppDispatch();
 
@@ -36,8 +35,6 @@ const SearchDetails = () => {
       dispatch(handleMapData(mapData?.uCode));
     }
   }, [mapData?.uCode])
-
-
 
   return (
     <div

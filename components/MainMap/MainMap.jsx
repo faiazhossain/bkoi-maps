@@ -9,7 +9,6 @@ import {
   setMapVisibility,
   setNearByClickedLocation,
   setNearBySearchedLocation,
-  setPolyGonData,
   setReverseGeoLngLat,
   setRupantorData,
   setSearchedMapData,
@@ -95,7 +94,6 @@ const MainMap = () => {
   const mapVisibility = useAppSelector(
     (state) => state?.map?.mapVisibility
   );
-  console.log(mapVisibility, 'current')
   const nearByClickedLocationData = useAppSelector(
     (state) => state?.map?.nearByClickedLocation
   );
@@ -128,7 +126,7 @@ const MainMap = () => {
           // (layer) => layer.id && layer["source-layer"] === ("poi")
         );       
         // availableOpenMapData[10].paint['text-color']='red';
-        // console.log(availableOpenMapData[10].layout["icon-image"]='{ptype}_11');
+
 
         availableOpenMapData.forEach((layer) => {
           if(layer.minzoom===13 ||layer.minzoom ===14 || layer.minzoom ===15){
@@ -184,7 +182,7 @@ const MainMap = () => {
 
   // polygon layer data
 
-const coordinates =  mapData?.bounds
+const coordinates =mapData?.type==='Admin' &&  mapData?.bounds
 ?.replace("POLYGON((", "") // Remove "POLYGON(("
 ?.replace("))", "")         // Remove "))"
 ?.split(",")                // Split the remaining string by ","
@@ -198,7 +196,8 @@ const transformedData = !polygonData || mapData
   ]
 : mapData;
 
-const coordinatesPolygon = (polygonData)
+
+const coordinatesPolygon = revGeoData?.place?.type==='Admin' &&(polygonData)
 ?.replace("POLYGON((", "") // Remove "POLYGON(("
 ?.replace("))", "")         // Remove "))"
 ?.split(",")                // Split the remaining string by ","
@@ -221,7 +220,6 @@ useEffect(() => {
   )
     .then((response) => response.json())
     .then((data) => {
-      // console.log(data,'One')
     // dispatch(setScatterData(data.computed_geometry.coordinates));
     dispatch(setScatterData(data.computed_geometry.coordinates))
     })
@@ -229,7 +227,6 @@ useEffect(() => {
 }, [imgId]);
 
   const modifiedScatterData = [{coordinates:scatterData}];
-  // console.log(imgId,'Faiaz')
 
  
   // distance matrix layers
@@ -328,36 +325,37 @@ useEffect(() => {
       getRadius: d => Math.sqrt(d.exits),
       getFillColor: d => [255, 140, 0],
       getLineColor: d => [0, 0, 0]
-    })
+    }),
 
-    // new PolygonLayer({
-    //   id: 'polygon-layer',
-    //   data: transformedData,
-    //   pickable: true,
-    //   stroked: true,
-    //   filled: true,
-    //   wireframe: true,
-    //   lineWidthMinPixels: 1,
-    //   getPolygon: d => d.contour,
-    //   getElevation: d => d.population / d.area / 10,
-    //   getFillColor: [254, 179, 145, 120],
-    //   getLineColor: [80, 80, 80], 
-    //   getLineWidth: 1
-    // }),
-    // new PolygonLayer({
-    //   id: 'polygon-layer',
-    //   data: transformedDataPolygon,
-    //   pickable: true,
-    //   stroked: true,
-    //   filled: true,
-    //   wireframe: true,
-    //   lineWidthMinPixels: 1,
-    //   getPolygon: d => d.contour,
-    //   getElevation: d => d.population / d.area / 10,
-    //   getFillColor: [254, 179, 145, 120],
-    //   getLineColor: [80, 80, 80], 
-    //   getLineWidth: 1
-    // }),
+    new PolygonLayer({
+      id: 'polygon-layer',
+      data: transformedData,
+      pickable: true,
+      stroked: true,
+      filled: true,
+      wireframe: true,
+      lineWidthMinPixels: 1,
+      getPolygon: d => d.contour,
+      getElevation: d => d.population / d.area / 10,
+      getFillColor: [254, 179, 145, 120],
+      getLineColor: [80, 80, 80], 
+      getLineWidth: 1
+    }),
+
+    new PolygonLayer({
+      id: 'polygon-layer',
+      data: transformedDataPolygon,
+      pickable: true,
+      stroked: true,
+      filled: true,
+      wireframe: true,
+      lineWidthMinPixels: 1,
+      getPolygon: d => d.contour,
+      getElevation: d => d.population / d.area / 10,
+      getFillColor: [254, 179, 145, 120],
+      getLineColor: [80, 80, 80], 
+      getLineWidth: 1
+    }),
   ];
 
   // For setting mappillary ID on click
@@ -365,31 +363,31 @@ useEffect(() => {
   // const [singleMapillaryData, setSingleMapillaryData]= useState(null);
 
   const handleClick = (e) => {
-    const mapillaryFeatures = e.target.queryRenderedFeatures(e.point, {
-      layers: [ 'mapillary-images'], // Specify the layers you want to query
-    });   
-  
-
-    const bkoi_features = e.target.queryRenderedFeatures(e.point, {
-      layers: [ 'mapillary-images'], // Specify the layers you want to query
-    });
     
-   
-
-    if(mapillaryFeatures[0]?.properties.id){
-      dispatch(setSingleMapillaryData(mapillaryFeatures[0]?.properties.id));
-      dispatch(setImgId(null));
+    if (mapillaryData) {
+      // Query for mapillary features
+      const mapillaryFeatures = e.target.queryRenderedFeatures(e.point, {
+        layers: ['mapillary-images'], // Specify the layers you want to query
+      });
+    
+      // Check if there are mapillary features and the first feature has an "id" property
+      if (mapillaryFeatures.length > 0 && mapillaryFeatures[0]?.properties?.id) {
+        // Dispatch actions if the conditions are met
+        dispatch(setSingleMapillaryData(mapillaryFeatures[0]?.properties?.id));
+        dispatch(setImgId(null));
+      }
     }
     else {
     const features = mapRef?.current?.queryRenderedFeatures(e.point);
 
+
     if (features?.length > 0) {
       // Do something with the clicked feature's properties
       const properties = features[0]?.properties;
-      if (properties.ucode) {
-        if (uCode) {
-          router.push("/");
-        }
+      if (properties.place_code) {
+        // if (uCode) {
+        //   router.push("/");
+        // }
         dispatch(setNearBySearchedLocation(null));
         dispatch(setSearchedMapData(null));
         dispatch(setSelectedLocation(null));
@@ -399,15 +397,15 @@ useEffect(() => {
         const lng = e?.lngLat?.lng;
         const data = { lat, lng };
 
+
         const uCodeOnlyLat = e?.lngLat?.lat;
         const uCodeOnlyLng = e?.lngLat?.lng;
         const latNdLng = { uCodeOnlyLng, uCodeOnlyLat };
-
         // dispatch(setUCodeMarker(latNdLng));
         dispatch(setUCodeMarker(latNdLng));
         dispatch(handleFetchNearby(data));
         // dispatch(handleFetchNearby(null));
-        dispatch(handleSearchedPlaceByUcode(properties.ucode));
+        dispatch(handleSearchedPlaceByUcode(properties.place_code));
         dispatch(setSelectedLocation(null));
         dispatch(setMapVisibility(true));
         dispatch(setSelectLocationFrom(null));
@@ -423,6 +421,30 @@ useEffect(() => {
   };
 
   const handleDoubleClick =(e)=>{
+    const features = mapRef?.current?.queryRenderedFeatures(e.point);
+    const properties = features[0]?.source;
+    if(properties==='admin'){
+      const lat = e?.lngLat?.lat;
+    const lng = e?.lngLat?.lng;
+    const data = { lat, lng };
+    // dispatch(setUCode(properties.ucode))
+    dispatch(setReverseGeoLngLat(data));
+    dispatch(setUCodeMarker(null));
+    dispatch(handleGetPlacesWthGeocode(data));
+    dispatch(handleGetPlacesWthGeocode(null));
+    dispatch(setUCode(null));
+    dispatch(handleFetchNearby(data));
+    dispatch(handleFetchNearby(null));
+    // dispatch(handleSearchedPlaceByUcode(null));
+    dispatch(setSelectedLocation(null));
+    dispatch(setMapVisibility(true));
+    dispatch(setSelectLocationFrom(null));
+    dispatch(setSelectLocationTo(null));
+    dispatch(setGeoData(null));
+    dispatch(setNearByClickedLocation(null));
+    dispatch(setMapData(null));
+    dispatch(setNearBySearchedLocation(null));
+    } else {
     const lat = e?.lngLat?.lat;
     const lng = e?.lngLat?.lng;
     const data = { lat, lng };
@@ -443,22 +465,24 @@ useEffect(() => {
     dispatch(setNearByClickedLocation(null));
     dispatch(setMapData(null));
     dispatch(setNearBySearchedLocation(null));
+    }
+    
   }
 
   // on getting ucode
-  useEffect(() => {
-    if (uCode) {
-      dispatch(handleSearchedPlaceByUcode(uCode));
-      dispatch(setNearBySearchedLocation(null));
-    }
-  }, [uCode]);
+  // useEffect(() => {
+  //   if (uCode) {
+  //     dispatch(handleSearchedPlaceByUcode(uCode));
+  //     dispatch(setNearBySearchedLocation(null));
+  //   }
+  // }, [uCode]);
 
   const uCodeOnlyLng = uCodeOnly?.longitude ? uCodeOnly?.longitude : "";
   const uCodeOnlyLat = uCodeOnly?.latitude ? uCodeOnly?.latitude : "";
   const latNdLng = { uCodeOnlyLng, uCodeOnlyLat };
 
   // Fitbounds
-  const _onFitBounds = (data, jsonData, nearBySearchedData) => {
+  const _onFitBounds = (data, jsonData, nearBySearchedData, coordinatesPolygon) => {
     const map = mapRef.current;
     if (data) {
       const geoJsonPoints = {
@@ -479,6 +503,41 @@ useEffect(() => {
       if (map && map !== null) {
         map?.fitBounds(
           [
+            [minLng, minLat],
+            [maxLng, maxLat],
+          ],
+          {
+            padding: 140,
+            duration: 1000,
+            maxZoom: 16,
+          }
+        );
+      }
+      return;
+    }
+
+    if (coordinatesPolygon) {
+      const geoJsonPoints = {
+        type: "FeatureCollection",
+        features: [],
+      };
+
+      coordinatesPolygon?.forEach((d) => {
+
+        geoJsonPoints?.features?.push({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [d[0], d[1]],
+          },
+        });
+      });
+      const [minLng, minLat, maxLng, maxLat] = bbox(geoJsonPoints);
+
+      
+      if (map && map !== null) {
+        map?.fitBounds(
+            [
             [minLng, minLat],
             [maxLng, maxLat],
           ],
@@ -544,8 +603,9 @@ useEffect(() => {
   };
 
   useEffect(() => {
-    _onFitBounds(markerData, geoJsonData, nearBySearchedData);
+    _onFitBounds(markerData, geoJsonData, nearBySearchedData, coordinatesPolygon);
   }, [
+    polygonData,
     geoData,
     markerData,
     geoJsonData,
@@ -616,9 +676,30 @@ useEffect(() => {
           }}
           onMouseMove={(e) => {
             const features = mapRef?.current?.queryRenderedFeatures(e.point);
+
+
+            // if(features[0]?.layer?.source==='admin'){
+   
+            //   mapRef.current.getCanvas().style.cursor = 'pointer';
+            // }else {
+            //   mapRef.current.getCanvas().style.cursor = 'default';
+            // }
+            // if (features?.length > 0) {
+            //   const properties = features[0]?.layer?.source==='admin';
+            //   if (properties) {
+            //     mapRef.current.getCanvas().style.cursor = 'pointer';
+            //   } else {
+            //     mapRef.current.getCanvas().style.cursor = 'default';
+            //   }
+            // }
+
+
             if (features?.length > 0) {
               const properties = features[0]?.properties;
-              if (properties?.ucode) {
+              if (features[0]?.layer?.source==='admin') {
+                mapRef.current.getCanvas().style.cursor = 'pointer';
+              }
+              else if (properties?.place_code) {
                 mapRef.current.getCanvas().style.cursor = 'pointer';
               } else {
                 mapRef.current.getCanvas().style.cursor = 'default';

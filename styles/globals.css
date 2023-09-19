@@ -204,11 +204,18 @@
   border: none !important;
   box-shadow: none !important;
 }
-:where(.css-dev-only-do-not-override-12jzuas).ant-select-dropdown .ant-select-item-option-content >*{
-  white-space: break-spaces;
-  word-break: break-word;
-}
+/* :where(.css-dev-only-do-not-override-12jzuas).ant-select-dropdown .ant-select-item-option-content>* {
+  white-space: break-spaces !important;
+  word-break: break-word !important;
+} */
 
+:where(.css-dev-only-do-not-override-18iikkb).ant-select-dropdown .ant-select-item-option-content {
+  flex: auto;
+  overflow: hidden;
+  white-space: break-spaces !important;
+  word-break: break-word !important;
+  text-overflow: ellipsis;
+}
 
 .ant-select-dropdown{
   min-width: 400px !important;

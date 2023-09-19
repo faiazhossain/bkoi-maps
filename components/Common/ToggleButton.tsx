@@ -45,6 +45,7 @@ const ToggleButton = () => {
   const nearByClickedLocationData: any = useAppSelector(
     (state: { map: { nearByClickedLocation: any; }; }) => state?.map?.nearByClickedLocation
   );
+
   
   const handleMapVisibility = () => {
     dispatch(setMapVisibility(!mapVisibility));
@@ -63,7 +64,7 @@ const ToggleButton = () => {
           value: nearByClickedLocationData? nearByClickedLocationData.business_name ? nearByClickedLocationData.business_name :nearByClickedLocationData.address :  mapData?.business_name
             ?  mapData?.business_name
               ?  mapData?.business_name
-              : mapData?.Address
+              : mapData?.address
             : null,
         })
       );
@@ -73,9 +74,9 @@ const ToggleButton = () => {
         latitude: nearByClickedLocationData?.latitude? nearByClickedLocationData?.latitude : reverseGeoLngLat?.lat,
         longitude:nearByClickedLocationData?.longitude? nearByClickedLocationData?.longitude : reverseGeoLngLat?.lng,
         value: nearByClickedLocationData? nearByClickedLocationData.business_name ? nearByClickedLocationData.business_name :nearByClickedLocationData.address : revGeoData
-          ? revGeoData[0]?.business_name
-            ? revGeoData[0]?.business_name
-            : revGeoData[0]?.Address
+          ? revGeoData?.place?.business_name
+            ? revGeoData?.place?.business_name
+            : revGeoData?.place?.address
           : null,
       };
 
