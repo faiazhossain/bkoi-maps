@@ -30,6 +30,7 @@ const NearByInformation = () => {
   const nearByClickedLocationData: any = useAppSelector(
     (state) => state?.map?.nearByClickedLocation
   );
+
   const reverseGeoCode: any = useAppSelector(
     (state) => state?.map?.reverseGeoCode
   );
@@ -38,7 +39,9 @@ const NearByInformation = () => {
   );
 
   const mapData: any = useAppSelector((state) => state?.map?.mapData);
-  const uCode: any = mapData ? mapData.uCode : null;
+
+  const uCode: any = mapData ? mapData.place_code : null;
+
   const uCodeUrl: any = useAppSelector((state) => state?.map?.uCode ?? null);
 
   // for modal

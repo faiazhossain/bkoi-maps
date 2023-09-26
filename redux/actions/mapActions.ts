@@ -45,7 +45,6 @@ export function getSearchData(value: any) {
               latitude: Number(result.latitude),
             };
           });
-
           dispatch(setSearch(newOptions));
         });
       } catch (error) {
@@ -72,6 +71,7 @@ export const handleSearchPlaces = createAsyncThunk(
         longitude: Number(result?.longitude),
         latitude: Number(result?.latitude),
       }));
+
       dispatch(setSearchPlaces(newOptions));
     } catch (err) {
       console.error(err);
@@ -80,14 +80,14 @@ export const handleSearchPlaces = createAsyncThunk(
   }
 );
 
+// For selecting single data from autocomplete responses
 export const handleMapData = createAsyncThunk(
   "search/mapData",
   async (data: any, { dispatch }) => {
     try {
       const headers = { headers: { Authorization: `Bearer ${ 'MjYyMzpHOVkzWFlGNjZG' }` } }
       // const res = await axios.get(`${API.SEARCH_BY_CODE}${data}`);
-      const res = await axios.get(`${ API.SEARCH_BY_CODE }/${ data }`, headers)
-
+      const res = await axios.get(`${ API.SEARCH_BY_CODE }/${ data }`, headers);
       // await axios.get(`${ API.USER_TRANSACTION }`, { headers: { Authorization: `Bearer ${ token }` }, params: options?.params, signal: options?.signal })
 
       try {
@@ -95,6 +95,17 @@ export const handleMapData = createAsyncThunk(
           `${API.REVERSE_GEO}latitude=${ res.data.latitude }&longitude=${ res.data.longitude }`, headers
         );
         dispatch(setReverseGeoCode( dataformap?.data ));
+
+        if(dataformap?.data?.place?.type==='Admin'){
+          try {
+            const polyGonArea= await axios.get(
+              `https://elastic.bmapsbd.com/test/autocomplete/search?q=${dataformap.data.place.place_code}`
+            );
+            dispatch(setPolyGonData(polyGonArea.data.places[0].bounds));
+          } catch (err) {
+            console.error(err);
+          }
+        }
       } catch (err) {
         console.error(err);
       }
@@ -160,15 +171,15 @@ export const handleGetPlacesWthGeocode = createAsyncThunk(
         `${API.REVERSE_GEO}latitude=${lat}&longitude=${lng}`,headers
       );
       dispatch(setReverseGeoCode(res?.data));
-
-      try {
-        const polyGonArea= await axios.get(
-          `https://elastic.bmapsbd.com/test/autocomplete/search?q=${res.data.place.place_code}`
-        );
-
-        dispatch(setPolyGonData(polyGonArea.data.places[0].bounds));
-      } catch (err) {
-        console.error(err);
+      if(res?.data?.place?.type==='Admin' && res?.data?.place?.place_code!== null){
+        try {
+          const polyGonArea= await axios.get(
+            `https://elastic.bmapsbd.com/test/autocomplete/search?q=${res.data.place.place_code}`
+          );
+          dispatch(setPolyGonData(polyGonArea.data.places[0].bounds));
+        } catch (err) {
+          console.error(err);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -181,12 +192,12 @@ export const handleGetPlacesWthGeocode = createAsyncThunk(
 export const handleSearchedPlaceByUcode = createAsyncThunk(
   "search/searchPlaceByUcode",
   async (data: any, { dispatch }) => {
-
     try {
       // const token = localStorage.getItem('admin_token');
       const headers = { headers: { Authorization: `Bearer ${ 'MjYyMzpHOVkzWFlGNjZG' }` } }
       // const res = await axios.get(`${API.SEARCH_BY_CODE}${data}`);
       const res = await axios.get(`${ API.SEARCH_BY_CODE }/${ data }`, headers)
+
       dispatch(setUCode(res?.data));
       try {
         const dataforucode = await axios.get(
@@ -195,7 +206,6 @@ export const handleSearchedPlaceByUcode = createAsyncThunk(
         dispatch(setReverseGeoCode(dataforucode?.data));
         const data = {lat:res.data.latitude, lng:res.data.longitude}
         dispatch(setReverseGeoLngLat(data));
-
         try {
           const polyGonArea= await axios.get(
             `https://elastic.bmapsbd.com/test/autocomplete/search?q=${dataforucode.data.place_code}`

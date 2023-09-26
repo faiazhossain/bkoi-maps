@@ -6,6 +6,7 @@ import {
   setNearByButton,
   setNearByClickedLocation,
   setNearBySearchedLocation,
+  setPolyGonData,
   setReverseGeoCode,
   setReverseGeoLngLat,
   setSearchedMapData,
@@ -41,6 +42,7 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
   const dispatch = useAppDispatch();
 
   const place = router?.query?.place;
+
   const uCodeForLink: any = useAppSelector((state) => state?.map?.uCodeForLink);
   const uCodeData: any = useAppSelector((state) => state?.map?.uCode ?? "");
 
@@ -116,7 +118,6 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
       const latLngPattern = /(-?\d+\.\d+)\s*,?\s*(-?\d+\.\d+)/;
       const latLngMatch = enteredValue.match(latLngPattern);
 
-
       if(!latLngMatch)
       {
         if (isHandleSelectCalled) 
@@ -136,8 +137,9 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
         } else {
           dispatch(handleFetchNearby(null));
           const trimmedValue = trimmedStr.trim();
-          if(trimmedValue.length===8){ 
-            dispatch(handleSearchedPlaceByUcode(trimmedValue));
+          const upperCaseTrimmedValue = trimmedValue.toUpperCase();
+          if(upperCaseTrimmedValue.length===8){ 
+            dispatch(handleSearchedPlaceByUcode(upperCaseTrimmedValue));
           } else{
             dispatch(handleRupantorGeocode(trimmedValue));
           }
@@ -215,6 +217,7 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
     dispatch(handleGetPlacesWthGeocode(null))
     dispatch(setMapData(null))
     dispatch(setUCode(null))
+    dispatch(setPolyGonData(null))
   };
 
   // autocomplete value part
@@ -240,7 +243,7 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
         }}
       >
         <AutoComplete
-          style={{ width: "100%", border: "none" }}
+          style={{ width: "100%", border: "none", zIndex:'100' }}
           className="autoCompleteSearchbar"
           options={searchData?.map((option: any) => ({
             ...option,
@@ -265,12 +268,16 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
             onClick={handleClear}
             size="large"
             className="autoCompleteSearchbarButton"
+            style={{zIndex:'100'}}
           >
             <AiOutlineClose />
           </Button>
         )}
-        <div style={{ borderLeft: "1px solid #ccc", paddingLeft: "15px" }}>
+        <div style={{ borderLeft: "1px solid #ccc", zIndex:'100' }}>
+          <div style={{paddingLeft:'15px'}}>
+
           <ToggleButton></ToggleButton>
+          </div>
         </div>
       </div>
 

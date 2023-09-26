@@ -45,6 +45,7 @@ import DistanceSearch from "../Distance/DistanceSearch";
 import MapLayer from "../Layer/MapLayer";
 import SwitchButton from "../Common/SwitchButton";
 import MapillaryViewer from "../Common/MapillaryView";
+import GeolocationComponent from "../Common/GeolocationComponent";
 
 
 // for deckgl overlay
@@ -62,7 +63,6 @@ const MainMap = () => {
   // from router
   const router = useRouter();
   const uCode = router?.query?.place;
-
   // redux dispatch
   const dispatch = useAppDispatch();
 
@@ -99,8 +99,8 @@ const MainMap = () => {
   );
   const geoData = useAppSelector((state) => state?.map?.geoData ?? null);
   const uCodeData = useAppSelector((state) => state?.map?.uCode ?? null);
-  const mapData = useAppSelector((state) => state?.map?.mapData ?? null);
   const polygonData = useAppSelector((state) => state?.map?.polyGonData ?? null);
+
   const mapillaryData = useAppSelector((state) => state?.map?.mapillaryData ?? null);
   const singleMapillaryData = useAppSelector((state) => state?.map?.singleMapillaryData ?? null);
   const scatterData = useAppSelector((state) => state?.map?.scatterData ?? null);
@@ -177,42 +177,61 @@ const MainMap = () => {
           : "/marker.png",
       value: marker?.value,
     }));
-  }, [markerData]);
+  }, [markerData]);  
+
+  // For Multiple Polygon
+  const [multiPoly, setMultiPoly] = useState(null);
+
+  useEffect(() => {
+    if (polygonData && polygonData.includes("MULTIPOLYGON")) {
+      const multipolygonData = polygonData;
+
+      // Split the multipolygon into individual polygons
+      const polygons = multipolygonData
+        .replace("MULTIPOLYGON(((", "") // Remove "MULTIPOLYGON((("
+        .replace(")))", "")            // Remove ")))"
+        .split("),(")                   // Split into individual polygons
+      const inputArray = polygons;
+
+      // Remove the first and last characters from each string
+      const cleanedData = inputArray.map(str => str.replace(/\(|\)/g, ''));
+
+      // Process each polygon to convert it into the desired format
+      const formattedPolygons = cleanedData.map(polygonData => {
+        const coordinates = polygonData.split(",").map(coord => {
+          const [lon, lat] = coord.trim().split(" ").map(parseFloat);
+          return [lon, lat];
+        });
+        return coordinates;
+      });
+      setMultiPoly(formattedPolygons);
+    }
+  }, [polygonData]);
 
 
-  // polygon layer data
-
-const coordinates =mapData?.type==='Admin' &&  mapData?.bounds
-?.replace("POLYGON((", "") // Remove "POLYGON(("
-?.replace("))", "")         // Remove "))"
-?.split(",")                // Split the remaining string by ","
-?.map((coord) => coord.trim().split(" ").map(parseFloat)); 
-
-const transformedData = !polygonData || mapData
-? [
+  const transformedDataMultiPolygon = revGeoData
+  ? [
     {
-      contour: coordinates,
+      contour: multiPoly,
     },
   ]
-: mapData;
+  : revGeoData;
+
+// Polygon layer data filter
 
 
 const coordinatesPolygon = revGeoData?.place?.type==='Admin' &&(polygonData)
 ?.replace("POLYGON((", "") // Remove "POLYGON(("
-?.replace("))", "")         // Remove "))"
-?.split(",")                // Split the remaining string by ","
+?.replace("))", "") // Remove "))"
+?.split(",") // Split the remaining string by ","
 ?.map((coord) => coord.trim().split(" ").map(parseFloat)); 
-
-const transformedDataPolygon = !mapData && revGeoData
+const transformedDataPolygon = revGeoData
 ? [
     {
       contour: coordinatesPolygon,
     },
   ]
 : revGeoData;
-
-
-// const [scatterData,setScatterData]=useState(null);
 
 useEffect(() => {
   fetch(
@@ -329,7 +348,7 @@ useEffect(() => {
 
     new PolygonLayer({
       id: 'polygon-layer',
-      data: transformedData,
+      data: transformedDataMultiPolygon || transformedDataPolygon,
       pickable: true,
       stroked: true,
       filled: true,
@@ -340,8 +359,8 @@ useEffect(() => {
       getFillColor: [254, 179, 145, 120],
       getLineColor: [80, 80, 80], 
       getLineWidth: 1
-    }),
-
+    }),   
+    
     new PolygonLayer({
       id: 'polygon-layer',
       data: transformedDataPolygon,
@@ -379,15 +398,34 @@ useEffect(() => {
     }
     else {
     const features = mapRef?.current?.queryRenderedFeatures(e.point);
-
+    // features[0].layer.layout['icon-image']
+    // const customIconImage= 'https://i.ibb.co/XL9vrZh/icon.png';
+    // // const features = mapRef?.current?.queryRenderedFeatures(e.point);
+    //     if (features && features.length > 0) {
+    //       const firstFeature = features[0];
+    //       const iconLayer = firstFeature.layer;
+    //       if (iconLayer.layout && iconLayer.layout['icon-image']) {
+    //         iconLayer.layout['icon-image'] = customIconImage;     
+    //         let map = mapRef.current.getMap();
+    //         map.setLayoutProperty(iconLayer.id, 'icon-image', customIconImage);
+            // map.setLayoutProperty(iconLayer, 'icon-image',
+            //   [
+            //     'match',
+            //     [iconLayer.id], // get the feature id (make sure your data has an id set or use generateIds for GeoJSON sources
+            //     e.features[0].id, customIconImage, //image when id is the clicked feature id
+            //     'image-default' // default
+            //   ]
+            // )
+    //       }
+    // }
 
     if (features?.length > 0) {
       // Do something with the clicked feature's properties
       const properties = features[0]?.properties;
       if (properties.place_code) {
-        // if (uCode) {
-        //   router.push("/");
-        // }
+        if (uCode) {
+          router.push("/");
+        }
         dispatch(setNearBySearchedLocation(null));
         dispatch(setSearchedMapData(null));
         dispatch(setSelectedLocation(null));
@@ -420,31 +458,34 @@ useEffect(() => {
   }
   };
 
+  // On Double Click
+  
   const handleDoubleClick =(e)=>{
     const features = mapRef?.current?.queryRenderedFeatures(e.point);
     const properties = features[0]?.source;
     if(properties==='admin'){
-      const lat = e?.lngLat?.lat;
-    const lng = e?.lngLat?.lng;
-    const data = { lat, lng };
-    // dispatch(setUCode(properties.ucode))
-    dispatch(setReverseGeoLngLat(data));
-    dispatch(setUCodeMarker(null));
-    dispatch(handleGetPlacesWthGeocode(data));
-    dispatch(handleGetPlacesWthGeocode(null));
-    dispatch(setUCode(null));
-    dispatch(handleFetchNearby(data));
-    dispatch(handleFetchNearby(null));
-    // dispatch(handleSearchedPlaceByUcode(null));
-    dispatch(setSelectedLocation(null));
-    dispatch(setMapVisibility(true));
-    dispatch(setSelectLocationFrom(null));
-    dispatch(setSelectLocationTo(null));
-    dispatch(setGeoData(null));
-    dispatch(setNearByClickedLocation(null));
-    dispatch(setMapData(null));
-    dispatch(setNearBySearchedLocation(null));
-    } else {
+        const lat = e?.lngLat?.lat;
+        const lng = e?.lngLat?.lng;
+        const data = { lat, lng };
+        // dispatch(setUCode(properties.ucode))
+        dispatch(setReverseGeoLngLat(data));
+        dispatch(setUCodeMarker(null));
+        dispatch(handleGetPlacesWthGeocode(data));
+        dispatch(handleGetPlacesWthGeocode(null));
+        dispatch(setUCode(null));
+        dispatch(handleFetchNearby(data));
+        dispatch(handleFetchNearby(null));
+        // dispatch(handleSearchedPlaceByUcode(null));
+        dispatch(setSelectedLocation(null));
+        dispatch(setMapVisibility(true));
+        dispatch(setSelectLocationFrom(null));
+        dispatch(setSelectLocationTo(null));
+        dispatch(setGeoData(null));
+        dispatch(setNearByClickedLocation(null));
+        dispatch(setMapData(null));
+        dispatch(setNearBySearchedLocation(null));
+      } 
+    else {
     const lat = e?.lngLat?.lat;
     const lng = e?.lngLat?.lng;
     const data = { lat, lng };
@@ -470,12 +511,12 @@ useEffect(() => {
   }
 
   // on getting ucode
-  // useEffect(() => {
-  //   if (uCode) {
-  //     dispatch(handleSearchedPlaceByUcode(uCode));
-  //     dispatch(setNearBySearchedLocation(null));
-  //   }
-  // }, [uCode]);
+  useEffect(() => {
+    if (uCode) {
+      dispatch(handleSearchedPlaceByUcode(uCode));
+      dispatch(setNearBySearchedLocation(null));
+    }
+  }, [uCode]);
 
   const uCodeOnlyLng = uCodeOnly?.longitude ? uCodeOnly?.longitude : "";
   const uCodeOnlyLat = uCodeOnly?.latitude ? uCodeOnly?.latitude : "";
@@ -516,6 +557,8 @@ useEffect(() => {
       return;
     }
 
+    // For polygon layer fitbounds
+
     if (coordinatesPolygon) {
       const geoJsonPoints = {
         type: "FeatureCollection",
@@ -523,7 +566,6 @@ useEffect(() => {
       };
 
       coordinatesPolygon?.forEach((d) => {
-
         geoJsonPoints?.features?.push({
           type: "Feature",
           geometry: {
@@ -650,9 +692,7 @@ useEffect(() => {
   const handleMapillaryData = () => {
     dispatch(setSingleMapillaryData(null));
   };
-
   
-
   return (
     <Row>
       <Col span={24}>
@@ -692,7 +732,6 @@ useEffect(() => {
             //     mapRef.current.getCanvas().style.cursor = 'default';
             //   }
             // }
-
 
             if (features?.length > 0) {
               const properties = features[0]?.properties;
@@ -822,6 +861,7 @@ useEffect(() => {
 
 
           <SwitchButton id={setSingleMapillaryData}></SwitchButton>
+          <GeolocationComponent></GeolocationComponent>
           <MapLayer></MapLayer>
 
           {!mapillaryData && <Row

@@ -28,9 +28,9 @@ const MapLayer: React.FC = () => {
     setMapStyleLayer(4);
     dispatch(setMapLayer(`${API.TRAVEL_LAYER}`));
   };
-
   return (
-    <div style={containerStyle}>
+    // <div style={containerStyle}>
+    <div>
       <FloatButton.Group
         trigger="click"
         style={{ right: 54 }}

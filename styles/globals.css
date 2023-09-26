@@ -135,7 +135,7 @@
 }
 
 .ant-float-btn-square {
-  height: 60px !important;
+  height: 54px !important;
 }
 
 .ant-float-btn-group-square
@@ -216,7 +216,10 @@
   word-break: break-word !important;
   text-overflow: ellipsis;
 }
-
+:where(.css-18iikkb).ant-select-dropdown .ant-select-item-option-content{
+  white-space: break-spaces !important;
+  word-break: break-word !important;
+}
 .ant-select-dropdown{
   min-width: 400px !important;
   width: 400px !important;

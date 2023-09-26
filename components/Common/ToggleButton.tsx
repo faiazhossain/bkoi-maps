@@ -4,6 +4,7 @@ import {
   setMapVisibility,
   setNearByClickedLocation,
   setNearBySearchedLocation,
+  setPolyGonData,
   setSelectLocationFrom,
   setSelectLocationTo,
   setToggleDistanceButton,
@@ -108,6 +109,7 @@ const ToggleButton = () => {
     dispatch(setGeoData(null));
     dispatch(setMapData(null));
     dispatch(setUCode(null));
+    dispatch(setPolyGonData(null));
     dispatch(setToggleDistanceButton(!toggleDistanceButton)); // Fly To in distance matrix data change
   };
 

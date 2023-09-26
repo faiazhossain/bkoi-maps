@@ -33,6 +33,7 @@ const ReverseGeocode = () => {
     (state: any) => state?.map?.reverseGeoCode
   );
 
+
   // for modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
@@ -305,7 +306,7 @@ const ReverseGeocode = () => {
                       text: `${LOCAL_BASE_URL}?place=${reverseGeoCode?.place?.place_code
                       }/`,
                       onCopy: () => dispatch(setuCodeForLink(reverseGeoCode?.place?.place_code
-                        ))
+                      ))
                     }}
                     style={{ textDecoration: "underline", marginTop: "5px" }}
                   >
