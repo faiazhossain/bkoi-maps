@@ -39,9 +39,9 @@ const GeolocationComponent = () => {
   }
   
   return (
-    <div id="geoLocationContainer" style={{ zIndex:999000, position:'absolute',right:'0px',top:'220px', cursor:'pointer'}}>
+    <div id="geoLocationContainer" style={{ position:'absolute',right:'0px',top:'220px', cursor:'pointer'}}>
       <div style={{width:'100%'}}>
-      <div onClick={onLocationSelect} style={{color:'black', fontSize:'32px', borderRadius:'50%',width:'fit-content', margin:'10px',zIndex:'999999', display:'inline-block'}}>
+      <div onClick={onLocationSelect} style={{color:'black', fontSize:'32px', borderRadius:'50%',width:'fit-content', margin:'10px', display:'inline-block'}}>
          <BiCurrentLocation></BiCurrentLocation>
          </div>
       </div>

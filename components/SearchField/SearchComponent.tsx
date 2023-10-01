@@ -3,6 +3,7 @@ import { AutoComplete, Button, Input } from "antd";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   setMapData,
+  setMultyPolygonData,
   setNearByButton,
   setNearByClickedLocation,
   setNearBySearchedLocation,
@@ -12,6 +13,7 @@ import {
   setSearchedMapData,
   setSelectedIconUCode,
   setSelectedMarker,
+  setSinglePolygonData,
   setUCode,
   setUCodeMarker,
 } from "@/redux/reducers/mapReducer";
@@ -104,6 +106,10 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
       dispatch(setReverseGeoLngLat(dataLatLng));
       dispatch(setNearByClickedLocation(null));
       dispatch(setNearBySearchedLocation(null));
+
+      dispatch(setPolyGonData(null));
+      dispatch(setSinglePolygonData(null));
+      dispatch(setMultyPolygonData(null));
     }
   };
 
@@ -215,9 +221,11 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
     dispatch(setNearByClickedLocation(null));
     dispatch(setNearBySearchedLocation(null));
     dispatch(handleGetPlacesWthGeocode(null))
-    dispatch(setMapData(null))
-    dispatch(setUCode(null))
-    dispatch(setPolyGonData(null))
+    dispatch(setMapData(null));
+    dispatch(setUCode(null));
+    dispatch(setPolyGonData(null));
+    dispatch(setSinglePolygonData(null));
+    dispatch(setMultyPolygonData(null));
   };
 
   // autocomplete value part
@@ -283,9 +291,9 @@ function SearchComponent({ onLocationSelect }: SearchComponentProps) {
 
       <SearchDetails />
 
-      {
+      {/* {
         place && <SearchDetails/>
-      }
+      } */}
 
     </div>
   );

@@ -37,6 +37,8 @@ const initialState = {
   singleMapillaryData:null,
   imgId:null,
   scatterData:null,
+  singlePolygonData:null,
+  multyPolygonData:null,
 };
 
 const mapSlice = createSlice({
@@ -139,8 +141,15 @@ const mapSlice = createSlice({
     },
     setPolyGonData: (state, action) => {
       state.polyGonData = action.payload;
-    },
+    },   
     
+    setSinglePolygonData: (state, action) => {
+      state.singlePolygonData = action.payload;
+    },  
+    setMultyPolygonData: (state, action) => {
+      state.multyPolygonData = action.payload;
+    },
+
     setMapillaryData: (state, action) => {
       state.mapillaryData = action.payload;
     },    
@@ -191,6 +200,8 @@ export const {
   setMapillaryData,
   setSingleMapillaryData,
   setImgId,
-  setScatterData
+  setScatterData,
+  setSinglePolygonData,
+  setMultyPolygonData
 } = mapSlice.actions;
 export default mapSlice.reducer;

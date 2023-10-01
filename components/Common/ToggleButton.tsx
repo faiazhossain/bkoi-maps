@@ -2,11 +2,13 @@ import {
   setGeoData,
   setMapData,
   setMapVisibility,
+  setMultyPolygonData,
   setNearByClickedLocation,
   setNearBySearchedLocation,
   setPolyGonData,
   setSelectLocationFrom,
   setSelectLocationTo,
+  setSinglePolygonData,
   setToggleDistanceButton,
   setUCode,
 } from "@/redux/reducers/mapReducer";
@@ -110,6 +112,8 @@ const ToggleButton = () => {
     dispatch(setMapData(null));
     dispatch(setUCode(null));
     dispatch(setPolyGonData(null));
+    dispatch(setSinglePolygonData(null));
+    dispatch(setMultyPolygonData(null));
     dispatch(setToggleDistanceButton(!toggleDistanceButton)); // Fly To in distance matrix data change
   };
 

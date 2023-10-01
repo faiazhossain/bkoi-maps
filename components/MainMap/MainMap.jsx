@@ -24,7 +24,9 @@ import {
   setSingleMapillaryData,
   setImgId,
   setScatterData,
-  setPolyGonData
+  setPolyGonData,
+  setSinglePolygonData,
+  setMultyPolygonData
 } from "@/redux/reducers/mapReducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -103,6 +105,8 @@ const MainMap = () => {
   const geoData = useAppSelector((state) => state?.map?.geoData ?? null);
   const uCodeData = useAppSelector((state) => state?.map?.uCode ?? null);
   const polygonData = useAppSelector((state) => state?.map?.polyGonData ?? null);
+  const singlePolygonData = useAppSelector((state) => state?.map?.singlePolygonData ?? null);
+  const multyPolygonData = useAppSelector((state) => state?.map?.multyPolygonData ?? null);
   const mapillaryData = useAppSelector((state) => state?.map?.mapillaryData ?? null);
   const singleMapillaryData = useAppSelector((state) => state?.map?.singleMapillaryData ?? null);
   const scatterData = useAppSelector((state) => state?.map?.scatterData ?? null);
@@ -184,18 +188,20 @@ const MainMap = () => {
 
 // // Polygon layer data filter
 
-const [singlePolygonData,setSinglePolygonData]=useState(null);
-const [multipolygonData,setMultiPolygonData]=useState(null);
-console.log(singlePolygonData)
+// const [singlePolygonData,setSinglePolygonData]=useState(null);
+// const [multipolygonData,setMultiPolygonData]=useState(null);
+
+
 useEffect(() => {
   if(polygonData){ 
     const dataGot = wkt.parse(polygonData);
     if(dataGot?.type==='Polygon'){
-        setSinglePolygonData(dataGot?.coordinates);
-        setMultiPolygonData(null);
+        // setSinglePolygonData(dataGot?.coordinates);
+        dispatch(setMultyPolygonData(null))
+        dispatch(setSinglePolygonData(dataGot?.coordinates))
       }else{
-        setMultiPolygonData(dataGot?.coordinates)
-        setSinglePolygonData(null);
+        dispatch(setMultyPolygonData(dataGot?.coordinates))
+        dispatch(setSinglePolygonData(null))
       }
     }
   }, [polygonData]);
@@ -210,7 +216,7 @@ const transformedDataPolygon = revGeoData
 
 
 const multytransformedDataPolygon = revGeoData
-  ? multipolygonData?.flatMap(data => ({
+  ? multyPolygonData?.flatMap(data => ({
       contour: data,
     }))
   : revGeoData;
@@ -341,7 +347,7 @@ useEffect(() => {
       lineWidthMinPixels: 1,
       getPolygon: d => d.contour,
       getElevation: d => d.population / d.area / 10,
-      getFillColor: [254, 179, 145, 120],
+      getFillColor: [226, 94, 62, 50],
       getLineColor: [80, 80, 80], 
       getLineWidth: 1
     }),   
@@ -356,7 +362,7 @@ useEffect(() => {
       lineWidthMinPixels: 1,
       getPolygon: d => d.contour,
       getElevation: d => d.population / d.area / 10,
-      getFillColor: [254, 179, 145, 120],
+      getFillColor: [226, 94, 62, 50],
       getLineColor: [80, 80, 80], 
       getLineWidth: 1
     }),
@@ -417,12 +423,13 @@ useEffect(() => {
         dispatch(setToggleDistanceButton(true));
         dispatch(setRupantorData(null));
         dispatch(setPolyGonData(null));
-        console.log(polygonData,'faiaz')
+        dispatch(setSinglePolygonData(null));
+        dispatch(setMultyPolygonData(null));
         const lat = e?.lngLat?.lat;
         const lng = e?.lngLat?.lng;
         const data = { lat, lng };
-
-
+        
+        
         const uCodeOnlyLat = e?.lngLat?.lat;
         const uCodeOnlyLng = e?.lngLat?.lng;
         const latNdLng = { uCodeOnlyLng, uCodeOnlyLat };
@@ -440,6 +447,7 @@ useEffect(() => {
         dispatch(setMapData(null));
         dispatch(setNearBySearchedLocation(null));
         dispatch(setReverseGeoLngLat(data));
+        // dispatch(setPolyGonData(null));
       } 
     } 
   }
@@ -510,7 +518,7 @@ useEffect(() => {
   const latNdLng = { uCodeOnlyLng, uCodeOnlyLat };
 
   // Fitbounds
-  const _onFitBounds = (data, jsonData, nearBySearchedData, polygonData,singlePolygonData, multipolygonData) => {
+  const _onFitBounds = (data, jsonData, nearBySearchedData, polygonData,singlePolygonData, multyPolygonData) => {
     const map = mapRef.current;
     if (data) {
       const geoJsonPoints = {
@@ -561,8 +569,6 @@ useEffect(() => {
         });
       });
       const [minLng, minLat, maxLng, maxLat] = bbox(geoJsonPoints);
-
-      console.log(minLng, minLat, maxLng, maxLat)
       if (map && map !== null) {
         map?.fitBounds(
             [
@@ -581,13 +587,13 @@ useEffect(() => {
     
     // For multy polygon layer fitbounds
 
-    if (polygonData && multipolygonData) {
+    if (polygonData && multyPolygonData) {
       const geoJsonPoints = {
         type: "FeatureCollection",
         features: [],
       };
 
-      multipolygonData.flatMap(data=>data[0])?.forEach((d) => {
+      multyPolygonData.flatMap(data=>data[0])?.forEach((d) => {
         geoJsonPoints?.features?.push({
           type: "Feature",
           geometry: {
@@ -598,7 +604,6 @@ useEffect(() => {
       });
       const [minLng, minLat, maxLng, maxLat] = bbox(geoJsonPoints);
 
-      console.log(minLng, minLat, maxLng, maxLat)
       if (map && map !== null) {
         map?.fitBounds(
             [
@@ -667,7 +672,7 @@ useEffect(() => {
   };
 
   useEffect(() => {
-    _onFitBounds(markerData, geoJsonData, nearBySearchedData, polygonData,singlePolygonData, multipolygonData);
+    _onFitBounds(markerData, geoJsonData, nearBySearchedData, polygonData,singlePolygonData, multyPolygonData);
   }, [
     polygonData,
     geoData,
@@ -676,7 +681,7 @@ useEffect(() => {
     nearBySearchedData,
     nearByClickedLocationData,
     singlePolygonData,
-    multipolygonData
+    multyPolygonData
   ]);
 
   useEffect(() => {
